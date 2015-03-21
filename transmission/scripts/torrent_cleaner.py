@@ -9,7 +9,7 @@ from time import sleep
 
 class TorrentCleanerThread(Thread):
   """Really naive transmission torrent cleaner"""
-  def __init__(self, host="localhost", port=9091, ratio=1.0, logger=logging.getLogger()):
+  def __init__(self, host="127.0.0.1", port=9091, ratio=1.0, logger=logging.getLogger()):
     super(TorrentCleanerThread, self).__init__()
     self._clean = Event()
     self._quit = Event()
@@ -29,27 +29,26 @@ class TorrentCleanerThread(Thread):
       if self._quit.is_set():
         exit(0)
 
-      try:
-        tc = transmissionrpc.Client(self.host, port=self.port)
-        logging.getLogger('transmissionrpc').setLevel(logging.INFO)
-        tc = transmissionrpc.Client(self.host, port=self.port)
-        logging.getLogger('transmissionrpc').setLevel(logging.INFO)
-        self.log.info("Cleaning time! Getting list of torrents.")
-        torrents = tc.get_torrents()
-        for torrent in torrents:
-          if torrent_finished(torrent, self.ratio):
-            self.log.info("Torrent '{}' is finished, removing.".format(torrent.name))
-            tc.remove_torrent(torrent.id, delete_data=True)
-            return
-          if torrent.isStalled:
-            self.log.info("Torrent '{}' is stalled, removing.".format(torrent.name))
-            tc.remove_torrent(torrent.id, delete_data=True)
+        for i in range(1, 5):
+          try:
+            tc = transmissionrpc.Client(self.host, port=self.port)
+            logging.getLogger('transmissionrpc').setLevel(logging.INFO)
+            self.log.info("Cleaning time! Getting list of torrents.")
+            torrents = tc.get_torrents()
+            for torrent in torrents:
+              if torrent_finished(torrent, self.ratio):
+                self.log.info("Torrent '{}' is finished, removing.".format(torrent.name))
+                tc.remove_torrent(torrent.id, delete_data=True)
+                return
+              if torrent.isStalled:
+                self.log.info("Torrent '{}' is stalled, removing.".format(torrent.name))
+                tc.remove_torrent(torrent.id, delete_data=True)
+            self._clean.clear()
+          except Exception, e:
+            self.log.error(e)
+            if i < 4:
+              sleep(i * 2)
         self._clean.clear()
-      except Exception, e:
-        pass
-      finally:
-        self._clean.clear()
-
     exit(0)
 
 
