@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y --force-yes \
     openvpn transmission-daemon transmission-remote-cli \
-    transmission-cli curl
+    transmission-cli curl locales
 
 RUN dpkg-reconfigure locales && \
     locale-gen C.UTF-8 && \
