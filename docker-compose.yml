@@ -12,6 +12,15 @@ proxy:
   ports:
     - "80:80"
 
+btsync:
+  image: nate/btsync
+  hostname: btsync
+  volumes:
+    - /opt/btsync:/btsync
+  ports:
+    - "8888:8888"
+    - "55555:55555"
+
 ngrok:
   build: ngrok
   command: docker-start
