@@ -1,0 +1,27 @@
+#!/bin/bash
+set -eo pipefail
+trap "exit 0" 2 15
+
+function main {
+  if [ -z "$PLEX_USERNAME" ] || [ -z "$PLEX_PASSWORD" ]; then
+    echo "==> No Plex Pass credentials, using public update channel"
+    export PUBLIC=yes
+  fi
+
+  case "$1" in
+    bash)
+      exec /bin/bash
+      ;;
+    plex | '')
+      /usr/local/bin/plexupdate.sh
+      exec "/usr/bin/supervisord" "-c" "/etc/supervisor/supervisord.conf"
+      ;;
+    *)
+      exec $*
+      ;;
+  esac
+}
+
+ulimit -n 32768
+main "$@"
+exit 0

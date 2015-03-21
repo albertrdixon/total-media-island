@@ -101,3 +101,25 @@ couchpotato:
   volumes:
     - /opt/downloads/movies:/downloads
     - /data/movies:/movies
+
+plexdata:
+  build: plex
+  entrypoint: /bin/echo
+  command: data for plex
+  volumes:
+    - /plexmediaserver
+plex:
+  build: plex
+  command: plex
+  net: host
+  hostname: plexmediaserver
+  env_file: plex/.env
+  volumes_from:
+    - localtime
+    - plexdata
+    - /data:/data
+  cap_add:
+    - NET_ADMIN
+    - NET_BROADCAST
+    - NET_RAW
+
