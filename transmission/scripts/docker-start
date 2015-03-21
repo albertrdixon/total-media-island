@@ -1,0 +1,7 @@
+#!/bin/bash
+set -eo pipefail
+trap "exit 0" 2 15
+
+. /venv/bin/activate
+exec "/usr/bin/supervisord" "-c" "/etc/supervisor/supervisord.conf"
+exit 0

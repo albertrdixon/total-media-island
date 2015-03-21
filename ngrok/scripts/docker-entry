@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eo pipefail
+
+echo "**** Starting ngrok (https://ngrok.com/) container. Enjoy! ****"
+[ -n "$OPEN_FILE_LIMIT" ] &&\
+  ulimit -n $OPEN_FILE_LIMIT
+
+t2 -template-dir /templates -delete
+exec $*
+exit 0

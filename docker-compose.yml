@@ -1,0 +1,94 @@
+localtime:
+  image: busybox:latest
+  command: true
+  volumes:
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
+
+proxy:
+  image: jwilder/nginx-proxy
+  volumes:
+    - /var/run/docker.sock:/tmp/docker.sock
+  ports:
+    - "80:80"
+
+ngrok:
+  build: ngrok
+  command: docker-start
+  env_file: ngrok/.env
+  net: host
+  hostname: ngrok
+  cap_add:
+    - NET_ADMIN
+
+cadvisor:
+  image: google/cadvisor:latest
+  ports:
+    - 8080
+  env_file: .env.cadvisor
+  volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+
+transmission:
+  build: transmission
+  command: docker-start
+  hostname: transmission
+  cap_add:
+    - MKNOD
+    - NET_ADMIN
+  ports:
+    - 9091
+  env_file: transmission/.env
+  volumes_from:
+    - localtime
+  volumes:
+    - /opt/downloads/movies:/downloads
+
+sickragedata:
+  build: sickrage
+  entrypoint: /bin/echo
+  command: data for sickrage
+  volumes:
+    - /data
+sickrage:
+  build: sickrage
+  command: docker-start
+  hostname: sickrage
+  dns: 127.0.0.1
+  cap_add:
+    - NET_ADMIN
+  ports:
+    - "8081:8081"
+  env_file: sickrage/.env
+  volumes_from:
+    - localtime
+    - sickragedata
+  volumes:
+    - /opt/downloads/tv_shows:/downloads
+    - /data/tv_shows:/tv_shows
+
+couchpotatodata:
+  build: couchpotato
+  entrypoint: /bin/echo
+  command: data for couchpotato
+  volumes:
+    - /data
+couchpotato:
+  build: couchpotato
+  command: docker-start
+  hostname: couchpotato
+  dns: 127.0.0.1
+  cap_add:
+    - NET_ADMIN
+  ports:
+    - "5050:5050"
+  env_file: couchpotato/.env
+  volumes_from:
+    - localtime
+    - couchpotatodata
+  volumes:
+    - /opt/downloads/movies:/downloads
+    - /data/movies:/movies

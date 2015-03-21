@@ -1,0 +1,25 @@
+#!/bin/bash
+set -eo pipefail
+trap "exit 0" 2 15
+
+echo "**** Starting Transmission (https://www.transmissionbt.com/) container. Enjoy! ****"
+[ -n "$OPEN_FILE_LIMIT" ] &&\
+  ulimit -n $OPEN_FILE_LIMIT
+
+# Generate the transmission monitor config from template and env vars
+t2 -template-dir /templates -delete
+
+# Generate the PIA client_id
+head -n 100 /dev/urandom | md5sum | tr -d " -" > /pia_client_id
+
+# Generate the PIA credentials file
+echo -e "$PIA_USER\n$PIA_PASS" > /pia.cred
+
+[ -r "$OPENVPN_HOME/pia.crt" ] || mv /templates/pia.crt "$OPENVPN_HOME/pia.crt"
+[ -r "$OPENVPN_HOME/pia.pem" ] || mv /templates/pia.pem "$OPENVPN_HOME/pia.pem"
+
+[ -d /dev/net ] || mkdir -p /dev/net
+[ -c /dev/net/tun ] || mknod /dev/net/tun c 10 200
+
+exec $*
+exit 0
