@@ -1,0 +1,16 @@
+{ 
+  "device_name": "Docker BTsync",
+  "listening_port" : 55555,
+  "storage_path" : "/btsync/.sync",
+  "check_for_updates" : true, 
+  "use_upnp" : true,
+  "download_limit" : 0,                       
+  "upload_limit" : 0, 
+  "webui" :
+  {
+    "listen" : "0.0.0.0:8888",
+    "login" : "{{ default .Env.USERNAME "admin" }}",
+    "password" : "{{ default .Env.PASSWORD "admin" }}"
+  }
+}
+{{ dir "/btsync" }}{{ name "btsync.conf" }}

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eo pipefail
+
+echo "**** Starting btsync (https://www.btsync.com/) container. Enjoy! ****"
+[ -n "$OPEN_FILE_LIMIT" ] &&\
+  ulimit -n $OPEN_FILE_LIMIT
+
+t2 -template-dir /templates
+exec $*
+exit 0

@@ -12,11 +12,19 @@ proxy:
   ports:
     - "80:80"
 
-btsync:
-  image: nate/btsync
-  hostname: btsync
+btsyncdata:
+  build: btsync
+  entrypoint: /bin/echo
+  command: data for btsync
   volumes:
-    - /opt/btsync:/btsync
+    - /btsync
+btsync:
+  build: btsync
+  hostname: btsync
+  cap_add:
+    - NET_ADMIN
+  volumes_from:
+    - btsyncdata
   ports:
     - "8888:8888"
     - "55555:55555"
