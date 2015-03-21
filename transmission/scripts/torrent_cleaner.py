@@ -53,7 +53,7 @@ def torrent_finished(torrent, ratio):
 def main(argv):
   usage = "cleaner.py -H <transmission_host> [ -p <transmission_port> ] [ -f <clean_frequency_in_seconds> ] [ -r <ratio_limit> ]"
   host, port, frequency, ratio = None, 9091, 3600, 1.0
-  opts, args = getopt(argv, "hH:P:f:r:", ["host=", "port=", "frequency=", "ratio="])
+  opts, args = getopt(argv, "hH:p:f:r:", ["host=", "port=", "frequency=", "ratio="])
   for opt, arg in opts:
     if opt == '-h':
       print(usage)

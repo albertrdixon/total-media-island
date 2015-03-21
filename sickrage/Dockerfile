@@ -45,7 +45,7 @@ EXPOSE 8081
 ENV PATH                 /usr/local/bin:$PATH
 ENV OPEN_FILE_LIMIT      32768
 ENV SUPERVISOR_LOG_LEVEL INFO
-ENV SICKRAGE_CHANNEL     develop
+ENV SICKRAGE_CHANNEL     master
 ENV UPDATE_FREQUENCY     28800
 ENV SB_HOME              /sickrage
 ENV SB_USER              root

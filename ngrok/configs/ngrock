@@ -8,4 +8,8 @@ tunnels:
   sickrage:
     {{ if has_key .Env "DOMAIN" }}hostname: sickrage.{{ .Env.DOMAIN }}{{ end }}
     proto:
-      http: {{ .Env.SICKRAGE_PORT }}     
+      http: {{ .Env.SICKRAGE_PORT }}
+  plex:
+    {{ if has_key .Env "DOMAIN" }}hostname: plex.{{ .Env.DOMAIN }}{{ end }}
+    proto:
+      http: {{ .Env.PLEX_PORT }}
