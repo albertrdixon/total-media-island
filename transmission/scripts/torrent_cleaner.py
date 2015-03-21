@@ -9,11 +9,12 @@ from time import sleep
 
 class TorrentCleanerThread(Thread):
   """Really naive transmission torrent cleaner"""
-  def __init__(self, client, ratio=1.0, logger=logging.getLogger()):
+  def __init__(self, host="localhost", port=9091, ratio=1.0, logger=logging.getLogger()):
     super(TorrentCleanerThread, self).__init__()
     self._clean = Event()
     self._quit = Event()
-    self.client = client
+    self.host = host
+    self.port = port
     self.log = logger
 
   def clean(self):
@@ -28,17 +29,27 @@ class TorrentCleanerThread(Thread):
       if self._quit.is_set():
         exit(0)
 
-      self.log.info("Cleaning time! Getting list of torrents.")
-      torrents = self.client.get_torrents()
-      for torrent in torrents:
-        if torrent_finished(torrent, self.ratio):
-          self.log.info("Torrent '{}' is finished, removing.".format(torrent.name))
-          self.client.remove_torrent(torrent.id, delete_data=True)
-          return
-        if torrent.isStalled:
-          self.log.info("Torrent '{}' is stalled, removing.".format(torrent.name))
-          self.client.remove_torrent(torrent.id, delete_data=True)
-      self._clean.clear()
+      try:
+        tc = transmissionrpc.Client(self.host, port=self.port)
+        logging.getLogger('transmissionrpc').setLevel(logging.INFO)
+        tc = transmissionrpc.Client(self.host, port=self.port)
+        logging.getLogger('transmissionrpc').setLevel(logging.INFO)
+        self.log.info("Cleaning time! Getting list of torrents.")
+        torrents = tc.get_torrents()
+        for torrent in torrents:
+          if torrent_finished(torrent, self.ratio):
+            self.log.info("Torrent '{}' is finished, removing.".format(torrent.name))
+            tc.remove_torrent(torrent.id, delete_data=True)
+            return
+          if torrent.isStalled:
+            self.log.info("Torrent '{}' is stalled, removing.".format(torrent.name))
+            tc.remove_torrent(torrent.id, delete_data=True)
+        self._clean.clear()
+      except Exception, e:
+        pass
+      finally:
+        self._clean.clear()
+
     exit(0)
 
 
@@ -83,8 +94,7 @@ def main(argv):
 
   log.info("Cleaner started against {}:{}".format(host, port))
   log.info("Will try to clean every {} seconds".format(frequency))
-  tc = transmissionrpc.Client(host, port=port)
-  cleaner = TorrentCleanerThread(tc, ratio=ratio, logger=log)
+  cleaner = TorrentCleanerThread(host=host, port=port, ratio=ratio, logger=log)
   cleaner.start()
 
   try:
