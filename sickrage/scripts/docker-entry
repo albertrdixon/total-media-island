@@ -6,6 +6,6 @@ echo "**** Starting Sickrage (https://www.sickrage.tv) container. Enjoy! ****"
 [ -n "$OPEN_FILE_LIMIT" ] &&\
   ulimit -n $OPEN_FILE_LIMIT
 
-t2 -template-dir /templates -delete
+t2 -template-dir /templates
 exec $*
 exit 0

@@ -5,6 +5,6 @@ echo "**** Starting ngrok (https://ngrok.com/) container. Enjoy! ****"
 [ -n "$OPEN_FILE_LIMIT" ] &&\
   ulimit -n $OPEN_FILE_LIMIT
 
-t2 -template-dir /templates -delete
+t2 -template-dir /templates
 exec $*
 exit 0
