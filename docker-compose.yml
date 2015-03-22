@@ -21,6 +21,7 @@ btsyncdata:
 btsync:
   build: btsync
   hostname: btsync
+  env_file: btsync/.env
   cap_add:
     - NET_ADMIN
   volumes_from:
@@ -62,7 +63,7 @@ transmission:
   volumes_from:
     - localtime
   volumes:
-    - /opt/downloads/movies:/downloads
+    - /downloads
 
 sickragedata:
   build: sickrage
@@ -83,8 +84,8 @@ sickrage:
   volumes_from:
     - localtime
     - sickragedata
+    - transmission
   volumes:
-    - /opt/downloads/tv_shows:/downloads
     - /data/tv_shows:/tv_shows
 
 couchpotatodata:
@@ -106,8 +107,8 @@ couchpotato:
   volumes_from:
     - localtime
     - couchpotatodata
+    - transmission
   volumes:
-    - /opt/downloads/movies:/downloads
     - /data/movies:/movies
 
 plexdata:
