@@ -25,10 +25,11 @@ RUN apt-get purge -y --auto-remove \
 RUN apt-get autoremove -y && apt-get autoclean -y &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY configs /templates
-COPY scripts/* /usr/local/bin/
+ADD bashrc /root/.bashrc
+ADD configs /templates
+ADD scripts/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
-RUN bash -c "mkdir /downloads /etc/pia_transmission_monitor" &&\
+RUN bash -c "mkdir /downloads/{movies,tv_shows} /etc/pia_transmission_monitor" &&\
     bash -c "mkdir -p /transmission/{blocklists,resume,torrents,downloads,openvpn}"
 
 WORKDIR /
@@ -37,6 +38,7 @@ VOLUME ["/downloads"]
 EXPOSE 9091
 
 ENV SUPERVISOR_LOG_LEVEL        INFO
+ENV CLEAN_FREQUENCY             1800
 ENV PATH                        /usr/local/bin:$PATH
 ENV LOGDIR                      /logs
 ENV TRANSMISSION_HOME           /transmission
