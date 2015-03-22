@@ -29,7 +29,7 @@ ADD bashrc /root/.bashrc
 ADD configs /templates
 ADD scripts/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
-RUN bash -c "mkdir /downloads/{movies,tv_shows} /etc/pia_transmission_monitor" &&\
+RUN bash -c "mkdir -p /downloads/{movies,tv_shows} /etc/pia_transmission_monitor" &&\
     bash -c "mkdir -p /transmission/{blocklists,resume,torrents,downloads,openvpn}"
 
 WORKDIR /
