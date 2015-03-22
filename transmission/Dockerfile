@@ -37,6 +37,7 @@ VOLUME ["/downloads"]
 EXPOSE 9091
 
 ENV SUPERVISOR_LOG_LEVEL        INFO
+ENV CLEAN_FREQUENCY             3600
 ENV PATH                        /usr/local/bin:$PATH
 ENV LOGDIR                      /logs
 ENV TRANSMISSION_HOME           /transmission
