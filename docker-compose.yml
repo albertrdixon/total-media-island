@@ -25,6 +25,8 @@ btsync:
   env_file: btsync/.env
   cap_add:
     - NET_ADMIN
+  volumes:
+    - /opt/btsync:/data
   volumes_from:
     - btsyncdata
   ports:
