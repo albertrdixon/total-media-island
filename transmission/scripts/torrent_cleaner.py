@@ -48,7 +48,7 @@ class TorrentCleanerThread(Thread):
          break
         self.log.debug("Clean attempt {}".format(i))
         try:
-          self.log.debug("Getting list of torrents.")
+          self.log.debug("Acquiring client.")
           self.client = self.client or transmissionrpc.Client(self.host, port=self.port)
           logging.getLogger('transmissionrpc').setLevel(self.log.getEffectiveLevel())
           self.log.debug("Getting list of torrents.")
@@ -59,20 +59,24 @@ class TorrentCleanerThread(Thread):
           else:
             for torrent in torrents:
               self.should_quit()
+              remove = False
               self.log.info("Torrent #{}: {}".format(torrent.id, torrent))
               if torrent_finished(torrent, self.ratio):
                 self.log.info("Torrent #{} ({}) is finished, removing.".format(torrent.id, torrent))
-                self.client.remove_torrent(torrent.id, delete_data=True)
-              if torrent.isStalled:
+                remove = True
+              if torrent.isStalled or torrent.status == "stopped":
                 self.log.info("Torrent #{} ({}) is stalled, removing.".format(torrent.id, torrent))
+                remove = True
+              if remove:
                 self.client.remove_torrent(torrent.id, delete_data=True)
-              self.log.info("Torrent #{} is not finished or stalled, skipping.".format(torrent.id))
+              else:
+                self.log.info("Torrent #{} ({}) is still active, skipping.".format(torrent.id, torrent))
             else:
               self.finished = True
         except Exception, e:
-          self.log.error(e)
+          self.log.error("ERROR: {}".format(e))
           if i < 4:
-            sleep(i * 2)
+            sleep(i * 3)
           continue
       self.log.info("Cleaning run complete!")
       self._clean.clear()
@@ -80,11 +84,10 @@ class TorrentCleanerThread(Thread):
 
 
 def torrent_finished(torrent, ratio):
-  if torrent.isFinished:
-    return True
-  if torrent.progress == 100 and torrent.ratio >= ratio:
-    return True
-  return False
+  done = False
+  if torrent.isFinished or (torrent.progress == 100 and torrent.ratio >= ratio):
+    done = True
+  return done
 
 
 def main(argv):
@@ -124,7 +127,7 @@ def main(argv):
   log.addHandler(ch)
 
   log.info("Cleaner started against {}:{}".format(host, port))
-  log.info("Will try to clean every {} seconds".format(frequency))
+  log.info("Will try to clean every {} minutes".format(frequency / 60))
   cleaner = TorrentCleanerThread(host=host, port=port, ratio=ratio, logger=log)
   cleaner.start()
 
