@@ -1,5 +1,5 @@
 { 
-  "device_name": {{ default .Env.DEVICE_NAME "docker btsync" }},
+  "device_name": "{{ default .Env.DEVICE_NAME "docker btsync" }}",
   "listening_port" : {{ default .Env.LISTEN_PORT 55555 }},
   "storage_path" : "/btsync/.sync",
   "check_for_updates" : true, 
