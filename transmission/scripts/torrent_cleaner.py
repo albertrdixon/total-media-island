@@ -127,7 +127,7 @@ def main(argv):
   log.addHandler(ch)
 
   log.info("Cleaner started against {}:{}".format(host, port))
-  log.info("Will try to clean every {} minutes".format(frequency / 60))
+  log.info("Will try to clean every {} minutes".format(int(frequency)/60))
   cleaner = TorrentCleanerThread(host=host, port=port, ratio=ratio, logger=log)
   cleaner.start()
 
