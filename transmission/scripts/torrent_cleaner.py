@@ -46,7 +46,7 @@ class TorrentCleanerThread(Thread):
         self.should_quit()
         if self.finished:
          break
-        self.log.debug("Clean attempt {}".format(i))
+        self.log.debug("Clean attempt #{}.".format(i))
         try:
           self.log.debug("Acquiring client.")
           self.client = self.client or transmissionrpc.Client(self.host, port=self.port)
@@ -59,11 +59,11 @@ class TorrentCleanerThread(Thread):
             for torrent in torrents:
               self.should_quit()
               remove = False
-              self.log.info("Torrent #{}: {}".format(torrent.id, torrent.name))
+              self.log.info("Torrent #{}: '{}'.".format(torrent.id, torrent.name))
               if torrent_finished(torrent, self.ratio):
                 self.log.info("Torrent #{} ('{}') is finished, removing.".format(torrent.id, torrent.name))
                 remove = True
-              elif torrent.isStalled or torrent.status == "stopped":
+              elif torrent_stalled(torrent):
                 self.log.info("Torrent #{} ('{}') is stalled, removing.".format(torrent.id, torrent.name))
                 remove = True
               if remove:
@@ -87,9 +87,18 @@ def torrent_finished(torrent, ratio):
   done = False
   if torrent.isFinished:
     done = True
-  if torrent.progress >= 100 and torrent.ratio >= ratio:
+  elif torrent.progress >= 100 and torrent.ratio >= ratio:
     done = True
   return done
+
+
+def torrent_stalled(torrent):
+  stalled = False
+  if torrent.isStalled:
+    stalled = True
+  elif torrent.status == "stopped":
+    stalled = True
+  return stalled
 
 
 def main(argv):
@@ -105,11 +114,20 @@ def main(argv):
     elif opt in ('-H', '--host'):
       host = arg
     elif opt in ('-p', '--port'):
-      port = arg
+      try:
+        port = int(arg)
+      except:
+        print("Expected int for port, using default.")
     elif opt in ('-f', '--frequency'):
-      frequency = arg
+      try:
+        frequency = int(arg)
+      except:
+        print("Expected int for frequency, using default.")
     elif opt in ('-r', '--ratio'):
-      ratio = arg
+      try:
+        ratio = float(arg)
+      except:
+        print("Expected float for ratio, using default.")
 
   if host is None:
     print("Must specify transmission host!")
@@ -130,13 +148,13 @@ def main(argv):
   logging.getLogger('transmissionrpc').setLevel(level)
 
   log.info("Cleaner started against {}:{}".format(host, port))
-  log.info("Will try to clean every {} minutes".format(int(frequency)/60))
+  log.info("Will try to clean every {} minutes".format((frequency / 60)))
   cleaner = TorrentCleanerThread(host=host, port=port, ratio=ratio, logger=log)
   cleaner.start()
 
   try:
     while True:
-      sleep(int(frequency))
+      sleep(frequency)
       cleaner.clean()
   except (KeyboardInterrupt, SystemExit):
     log.info("Caught interrupt, quitting")
