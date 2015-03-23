@@ -13,7 +13,7 @@ RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v1.0.0
 ADD configs /templates
 ADD scripts/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/* &&\
-    mkdir /btsync
+    mkdir -p /btsync/.sync
 
 ENTRYPOINT ["docker-entry"]
 CMD ["bash"]
