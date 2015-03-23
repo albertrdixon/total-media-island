@@ -26,7 +26,7 @@ btsync:
   cap_add:
     - NET_ADMIN
   volumes:
-    - /opt/btsync:/data
+    - /data:/data
   volumes_from:
     - btsyncdata
   ports:
