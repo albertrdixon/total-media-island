@@ -20,6 +20,7 @@ btsyncdata:
     - /btsync
 btsync:
   build: btsync
+  command: docker-start
   hostname: btsync
   env_file: btsync/.env
   cap_add:
