@@ -28,8 +28,9 @@ btsync:
   volumes_from:
     - btsyncdata
   ports:
-    - "8888:8888"
     - "55555:55555"
+  expose:
+    - "8888"
 
 ngrok:
   build: ngrok
@@ -42,7 +43,7 @@ ngrok:
 
 cadvisor:
   image: google/cadvisor:latest
-  ports:
+  expose:
     - 8080
   env_file: .env.cadvisor
   volumes:
@@ -58,7 +59,7 @@ transmission:
   cap_add:
     - MKNOD
     - NET_ADMIN
-  ports:
+  expose:
     - 9091
   env_file: transmission/.env
   volumes_from:
@@ -121,9 +122,20 @@ plexdata:
 plex:
   build: plex
   command: plex
-  net: host
   hostname: plexmediaserver
   env_file: plex/.env
+  ports:
+    - "32400:32400"
+    - "1900:1900/udp"
+    - "3005:3005"
+    - "5353:5353/udp"
+    - "8324:8324"
+    - "32410:32410/udp"
+    - "32411:32411/udp"
+    - "32412:32412/udp"
+    - "32413:32413/udp"
+    - "32414:32414/udp"
+    - "32469:32469"
   volumes:
     - /data:/data
   volumes_from:
