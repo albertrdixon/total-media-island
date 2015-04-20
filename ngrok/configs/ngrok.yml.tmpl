@@ -1,5 +1,5 @@
 {{ dir "/root/.ngrok2" }}{{ name "ngrok.yml" }}
-{{ if has_key .Env "AUTH_TOKEN" }}auth_token: {{ .Env.AUTH_TOKEN }}{{ end }}
+{{ if has_key .Env "AUTH_TOKEN" }}authtoken: {{ .Env.AUTH_TOKEN }}{{ end }}
 web_addr: 0.0.0.0:4040
 update: false
 compress_conn: {{ .Env.COMPRESS_CONN }}

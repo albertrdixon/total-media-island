@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eo pipefail
 
+ngrok authtoken $AUTH_TOKEN
 exec -a "ngrok" "ngrok" "start" "--all"
 exit 0
