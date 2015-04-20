@@ -7,14 +7,15 @@ RUN apt-get update -qq
 RUN apt-get install --no-install-recommends -y --force-yes \
     gettext-base curl wget ca-certificates \
     avahi-daemon avahi-utils supervisor &&\
-    apt-get autoclean -y &&\
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin
 
 RUN curl -#kL https://github.com/albertrdixon/escarole/releases/download/v0.0.3/escarole-linux.tgz |\
     tar xvz -C /usr/local/bin
+
+RUN apt-get autoremove -y && apt-get autoclean -y &&\
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ADD bashrc /root/.bashrc
 ADD configs /templates
