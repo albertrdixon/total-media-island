@@ -17,6 +17,7 @@ ADD scripts/* /usr/local/bin/
 RUN chmod a+rx /usr/local/bin/*
 ENTRYPOINT ["docker-entry"]
 CMD ["docker-start"]
+EXPOSE 4040
 
 ENV COUCHPOTATO_PORT 5050
 ENV SICKRAGE_PORT 8081

@@ -40,6 +40,8 @@ ngrok:
   env_file: ngrok/.env
   net: host
   hostname: ngrok
+  expose:
+    - 4040
   cap_add:
     - NET_ADMIN
 
