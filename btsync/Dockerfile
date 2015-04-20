@@ -7,7 +7,8 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends curl
 RUN curl -#kL https://download-cdn.getsyncapp.com/stable/linux-x64/BitTorrent-Sync_x64.tar.gz |\
     tar xvz -C /usr/local/bin
-RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v1.0.0/tnator-linux-amd64.tar.gz |\
+
+RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin
 
 ADD configs /templates
