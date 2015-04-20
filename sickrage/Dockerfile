@@ -12,7 +12,10 @@ RUN dpkg-reconfigure locales && \
     locale-gen C.UTF-8 && \
     /usr/sbin/update-locale LANG=C.UTF-8
 
-RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v1.0.0/tnator-linux-amd64.tar.gz |\
+RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
+    tar xvz -C /usr/local/bin
+
+RUN curl -#kL https://github.com/albertrdixon/escarole/releases/download/v0.0.2/escarole-linux.tgz |\
     tar xvz -C /usr/local/bin
 
 RUN virtualenv venv
