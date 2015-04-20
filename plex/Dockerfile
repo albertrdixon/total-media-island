@@ -5,27 +5,31 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -qq
 RUN apt-get install --no-install-recommends -y --force-yes \
-    ruby gettext-base curl wget ca-certificates \
+    gettext-base curl wget ca-certificates \
     avahi-daemon avahi-utils supervisor &&\
     apt-get autoclean -y &&\
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN gem install --minimal-deps --no-document --clear-sources clockwork &&\
-    gem cleanup
+RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
+    tar xvz -C /usr/local/bin
 
-ADD configs/* /etc/supervisor/conf.d/
-ADD scripts/clock.rb /root/
-ADD scripts/docker-start /usr/local/bin/
-ADD scripts/plexupdate.sh /usr/local/bin/
-ADD scripts/start_pms /usr/local/bin/
-RUN chmod a+rx /usr/local/bin/* &&\
+RUN curl -#kL https://github.com/albertrdixon/escarole/releases/download/v0.0.3/escarole-linux.tgz |\
+    tar xvz -C /usr/local/bin
+
+ADD bashrc /root/.bashrc
+ADD configs /templates
+ADD scripts/* /usr/local/bin/
+RUN chown root:root /usr/local/bin/* &&\
+    chmod a+rx /usr/local/bin/* &&\
     mkdir -p /plexupdate /plexmediaserver &&\
     touch /first_run
 
-ENTRYPOINT ["docker-start"]
+ENTRYPOINT ["docker-entry"]
+CMD ["docker-start"]
 VOLUME ["/plexmediaserver"]
 EXPOSE 32400 1900 5353 32410 32412 32413 32414 32469
 
+ENV OPEN_FILE_LIMIT     32768
 ENV DOWNLOADDIR         /plexupdate
 ENV FORCE               no
 ENV PUBLIC              no
