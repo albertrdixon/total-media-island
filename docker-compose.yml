@@ -123,7 +123,7 @@ plexdata:
     - /plexmediaserver
 plex:
   build: plex
-  command: plex
+  command: docker-start
   hostname: plexmediaserver
   env_file: plex/.env
   ports:
