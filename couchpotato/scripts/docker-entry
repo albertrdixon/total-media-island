@@ -5,6 +5,6 @@ echo "**** Starting Couchpotato (https://couchpota.to/) container. Enjoy! ****"
 [ -n "$OPEN_FILE_LIMIT" ] &&\
   ulimit -n $OPEN_FILE_LIMIT
 
-t2 -template-dir /templates -delete
+t2 /templates
 exec $*
 exit 0
