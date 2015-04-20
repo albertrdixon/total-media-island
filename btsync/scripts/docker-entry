@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eo pipefail
 
-echo "**** Starting ngrok (https://ngrok.com/) container. Enjoy! ****"
+echo "**** Starting btsync (https://www.btsync.com/) container. Enjoy! ****"
 [ -n "$OPEN_FILE_LIMIT" ] &&\
   ulimit -n $OPEN_FILE_LIMIT
 

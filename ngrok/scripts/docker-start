@@ -1,5 +1,5 @@
 #!/bin/bash
 set -eo pipefail
 
-exec -a "ngrok" "ngrok" "-log=stdout" "start" "couchpotato" "sickrage" 
+exec -a "ngrok" "ngrok" "-log=stdout" "start" $*
 exit 0

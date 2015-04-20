@@ -12,9 +12,31 @@ proxy:
   ports:
     - "80:80"
 
+btsyncdata:
+  build: btsync
+  entrypoint: /bin/echo
+  command: data for btsync
+  volumes:
+    - /btsync
+btsync:
+  build: btsync
+  command: docker-start
+  hostname: btsync
+  env_file: btsync/.env
+  cap_add:
+    - NET_ADMIN
+  volumes:
+    - /data:/data
+  volumes_from:
+    - btsyncdata
+  ports:
+    - "55555:55555"
+  expose:
+    - "8888"
+
 ngrok:
   build: ngrok
-  command: docker-start
+  command: docker-start couchpotato
   env_file: ngrok/.env
   net: host
   hostname: ngrok
@@ -23,7 +45,7 @@ ngrok:
 
 cadvisor:
   image: google/cadvisor:latest
-  ports:
+  expose:
     - 8080
   env_file: .env.cadvisor
   volumes:
@@ -39,13 +61,13 @@ transmission:
   cap_add:
     - MKNOD
     - NET_ADMIN
-  ports:
+  expose:
     - 9091
   env_file: transmission/.env
   volumes_from:
     - localtime
   volumes:
-    - /opt/downloads/movies:/downloads
+    - /downloads
 
 sickragedata:
   build: sickrage
@@ -66,8 +88,8 @@ sickrage:
   volumes_from:
     - localtime
     - sickragedata
+    - transmission
   volumes:
-    - /opt/downloads/tv_shows:/downloads
     - /data/tv_shows:/tv_shows
 
 couchpotatodata:
@@ -89,6 +111,40 @@ couchpotato:
   volumes_from:
     - localtime
     - couchpotatodata
+    - transmission
   volumes:
-    - /opt/downloads/movies:/downloads
     - /data/movies:/movies
+
+plexdata:
+  build: plex
+  entrypoint: /bin/echo
+  command: data for plex
+  volumes:
+    - /plexmediaserver
+plex:
+  build: plex
+  command: plex
+  hostname: plexmediaserver
+  env_file: plex/.env
+  ports:
+    - "32400:32400"
+    - "1900:1900/udp"
+    - "3005:3005"
+    - "5353:5353/udp"
+    - "8324:8324"
+    - "32410:32410/udp"
+    - "32411:32411/udp"
+    - "32412:32412/udp"
+    - "32413:32413/udp"
+    - "32414:32414/udp"
+    - "32469:32469"
+  volumes:
+    - /data:/data
+  volumes_from:
+    - localtime
+    - plexdata
+  cap_add:
+    - NET_ADMIN
+    - NET_BROADCAST
+    - NET_RAW
+

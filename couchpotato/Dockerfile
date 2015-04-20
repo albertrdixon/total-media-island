@@ -1,5 +1,5 @@
 FROM python:2.7.9
-MAINTAINER Albert Dixon <albert@timelinelabs.com>
+MAINTAINER Albert Dixon <albert.dixon@schange.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 

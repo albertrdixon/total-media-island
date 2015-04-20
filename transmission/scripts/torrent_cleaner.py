@@ -9,87 +9,152 @@ from time import sleep
 
 class TorrentCleanerThread(Thread):
   """Really naive transmission torrent cleaner"""
-  def __init__(self, client, ratio=1.0, logger=logging.getLogger()):
+  def __init__(self, host="127.0.0.1", port=9091, ratio=1.0, logger=logging.getLogger()):
     super(TorrentCleanerThread, self).__init__()
     self._clean = Event()
     self._quit = Event()
-    self.client = client
+    self.host = host
+    self.port = port
+    self.ratio = ratio
     self.log = logger
+    self.finished = False
+    self.client = None
 
   def clean(self):
     self._clean.set()
 
   def stop(self):
     self._quit.set()
+    self._clean.set()
+    self.finished = True
+
+  def should_quit(self):
+    if self._quit.is_set():
+      self.log.info("Cleaner shutting down")
+      exit(0)
 
   def run(self):
     while not self._quit.is_set():
+      self.log.info("Waiting for 'clean' event")
       self._clean.wait()
-      if self._quit.is_set():
-        exit(0)
+      self.should_quit()
 
-      self.log.info("Cleaning time! Getting list of torrents.")
-      torrents = self.client.get_torrents()
-      for torrent in torrents:
-        if torrent_finished(torrent, self.ratio):
-          self.log.info("Torrent '{}' is finished, removing.".format(torrent.name))
-          self.client.remove_torrent(torrent.id, delete_data=True)
-          return
-        if torrent.isStalled:
-          self.log.info("Torrent '{}' is stalled, removing.".format(torrent.name))
-          self.client.remove_torrent(torrent.id, delete_data=True)
+      self.log.info("Running torrent cleaner")
+      self.finished = False
+
+      for i in range(1, 5):
+        self.should_quit()
+        if self.finished:
+         break
+        self.log.debug("Clean attempt #{}.".format(i))
+        try:
+          self.log.debug("Acquiring client.")
+          self.client = self.client or transmissionrpc.Client(self.host, port=self.port)
+          self.log.debug("Getting list of torrents.")
+          torrents = self.client.get_torrents()
+          if not torrents:
+            self.log.info("No torrents to process!")
+            self.finished = True
+          else:
+            for torrent in torrents:
+              self.should_quit()
+              remove = False
+              self.log.info("Torrent #{}: '{}'.".format(torrent.id, torrent.name))
+              if torrent_finished(torrent, self.ratio):
+                self.log.info("Torrent #{} ('{}') is finished, removing.".format(torrent.id, torrent.name))
+                remove = True
+              elif torrent_stalled(torrent):
+                self.log.info("Torrent #{} ('{}') is stalled, removing.".format(torrent.id, torrent.name))
+                remove = True
+              if remove:
+                self.client.remove_torrent(torrent.id, delete_data=True)
+              else:
+                self.log.info("Torrent #{} ('{}') is still active, skipping.".format(torrent.id, torrent.name))
+            else:
+              self.finished = True
+        except Exception, e:
+          self.log.error("ERROR: {}".format(e))
+          if i < 4:
+            sleep(i * 3)
+          continue
+      self.log.info("Cleaning run complete!")
+      self.client = None
       self._clean.clear()
-    exit(0)
+    self.should_quit()
 
 
 def torrent_finished(torrent, ratio):
+  done = False
   if torrent.isFinished:
-    return True
-  if torrent.progress == 100 and torrent.ratio >= ratio:
-    return True
-  return False
+    done = True
+  elif torrent.progress >= 100 and torrent.ratio >= ratio:
+    done = True
+  return done
+
+
+def torrent_stalled(torrent):
+  stalled = False
+  if torrent.isStalled:
+    stalled = True
+  elif torrent.status == "stopped":
+    stalled = True
+  return stalled
 
 
 def main(argv):
-  usage = "cleaner.py -H <transmission_host> [ -p <transmission_port> ] [ -f <clean_frequency_in_seconds> ] [ -r <ratio_limit> ]"
-  host, port, frequency, ratio = None, 9091, 3600, 1.0
-  opts, args = getopt(argv, "hH:P:f:r:", ["host=", "port=", "frequency=", "ratio="])
+  usage = "torrent_cleaner.py -H <transmission_host> [ -p <transmission_port> ] [ -f <clean_frequency_in_seconds> ] [ -r <ratio_limit> ]"
+  host, port, frequency, ratio, debug = None, 9091, 3600, 1.0, False
+  opts, args = getopt(argv, "hdH:p:f:r:", ["host=", "port=", "frequency=", "ratio="])
   for opt, arg in opts:
     if opt == '-h':
       print(usage)
       sys.exit(2)
+    elif opt == '-d':
+      debug = True
     elif opt in ('-H', '--host'):
       host = arg
     elif opt in ('-p', '--port'):
-      port = arg
+      try:
+        port = int(arg)
+      except:
+        print("Expected int for port, using default.")
     elif opt in ('-f', '--frequency'):
-      frequency = arg
+      try:
+        frequency = int(arg)
+      except:
+        print("Expected int for frequency, using default.")
     elif opt in ('-r', '--ratio'):
-      ratio = arg
+      try:
+        ratio = float(arg)
+      except:
+        print("Expected float for ratio, using default.")
 
   if host is None:
     print("Must specify transmission host!")
     print(usage)
     sys.exit(1)
 
-  log = logging.getLogger()
-  log.setLevel(logging.INFO)
+  level = logging.INFO
+  if debug:
+    level = logging.DEBUG
+  log = logging.getLogger("torrent_cleaner")
+  log.setLevel(level)
 
   ch = logging.StreamHandler(sys.stdout)
-  ch.setLevel(logging.INFO)
+  ch.setLevel(level)
   formatter = logging.Formatter('[%(asctime)s] [%(module)s] %(levelname)s: %(message)s', datefmt='%d/%m/%Y %H:%M:%S')
   ch.setFormatter(formatter)
   log.addHandler(ch)
+  logging.getLogger('transmissionrpc').setLevel(level)
 
   log.info("Cleaner started against {}:{}".format(host, port))
-  log.info("Will try to clean every {} seconds".format(frequency))
-  tc = transmissionrpc.Client(host, port=port)
-  cleaner = TorrentCleanerThread(tc, ratio=ratio, logger=log)
+  log.info("Will try to clean every {} minutes".format((frequency / 60)))
+  cleaner = TorrentCleanerThread(host=host, port=port, ratio=ratio, logger=log)
   cleaner.start()
 
   try:
     while True:
-      sleep(int(frequency))
+      sleep(frequency)
       cleaner.clean()
   except (KeyboardInterrupt, SystemExit):
     log.info("Caught interrupt, quitting")

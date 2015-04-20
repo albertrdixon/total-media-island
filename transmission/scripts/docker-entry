@@ -7,7 +7,7 @@ echo "**** Starting Transmission (https://www.transmissionbt.com/) container. En
   ulimit -n $OPEN_FILE_LIMIT
 
 # Generate the transmission monitor config from template and env vars
-t2 -template-dir /templates -delete
+t2 -template-dir /templates
 
 # Generate the PIA client_id
 head -n 100 /dev/urandom | md5sum | tr -d " -" > /pia_client_id
