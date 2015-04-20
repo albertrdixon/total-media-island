@@ -1,0 +1,37 @@
+{{ dir "/root/.ngrok2" }}{{ name "ngrok.yml" }}
+{{ if has_key .Env "AUTH_TOKEN" }}auth_token: {{ .Env.AUTH_TOKEN }}{{ end }}
+web_addr: 0.0.0.0:4040
+update: false
+compress_conn: {{ .Env.COMPRESS_CONN }}
+log_level: {{ .Env.LOG_LEVEL }}
+log_format: {{ .Env.LOG_FMT }}
+log: stderr
+tunnels:
+  couchpotato:
+    inspect: false
+    proto: http
+    addr: {{ .Env.COUCHPOTATO_PORT }}
+    bind_tls: {{ .Env.TLS }}
+    {{ if has_key .Env "DOMAIN" }}hostname: couchpotato.{{ .Env.DOMAIN }}{{ end }}
+    {{ if has_key .Env "COUCHPOTATO_AUTH" }}auth: {{ .Env.COUCHPOTATO_AUTH }}{{ end }}
+  sickrage:
+    inspect: false
+    proto: http
+    addr: {{ .Env.SICKRAGE_PORT }}
+    bind_tls: {{ .Env.TLS }}
+    {{ if has_key .Env "DOMAIN" }}hostname: sickrage.{{ .Env.DOMAIN }}{{ end }}
+    {{ if has_key .Env "SICKRAGE_AUTH" }}auth: {{ .Env.SICKRAGE_AUTH }}{{ end }}
+  plex:
+    inspect: false
+    proto: http
+    addr: {{ .Env.PLEX_PORT }}
+    bind_tls: {{ .Env.TLS }}
+    {{ if has_key .Env "DOMAIN" }}hostname: plex.{{ .Env.DOMAIN }}{{ end }}
+    {{ if has_key .Env "PLEX_AUTH" }}auth: {{ .Env.PLEX_AUTH }}{{ end }}
+{{ if has_key .Env "SSH_REMOTE_ADDR" }}
+  ssh-access:
+    proto: tcp
+    addr: 22
+    remote_addr: {{ .Env.SSH_REMOTE_ADDR }}
+{{ end }}
+

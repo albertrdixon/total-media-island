@@ -1,8 +1,7 @@
 #!/bin/bash
 set -eo pipefail
-trap "exit 0" 2 15
 
-echo "**** Starting Sickrage (https://www.sickrage.tv) container. Enjoy! ****"
+echo "**** Starting Plex Media Server (https://plex.tv/) container. Enjoy! ****"
 [ -n "$OPEN_FILE_LIMIT" ] &&\
   ulimit -n $OPEN_FILE_LIMIT
 

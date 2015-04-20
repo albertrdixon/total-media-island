@@ -1,0 +1,5 @@
+{{ dir "/" }}{{ name "escarole.yaml" }}
+---
+  name: sickrage
+  directory: {{ default .Env.SB_HOME "/sickrage" }}
+  command: supervisorctl restart sickrage
