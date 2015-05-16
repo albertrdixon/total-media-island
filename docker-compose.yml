@@ -7,6 +7,7 @@ localtime:
 
 proxy:
   image: jwilder/nginx-proxy
+  restart: always
   volumes:
     - /var/run/docker.sock:/tmp/docker.sock
   ports:
@@ -21,6 +22,7 @@ btsyncdata:
 btsync:
   build: btsync
   command: docker-start
+  restart: always
   hostname: btsync
   env_file: btsync/.env
   cap_add:
@@ -56,20 +58,61 @@ cadvisor:
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
 
-transmission:
+moviedownloads:
+  image: busybox:latest
+  command: true
+  volumes:
+    - /downloads/movies
+showdownloads:
+  image: busybox:latest
+  command: true
+  volumes:
+    - /downloads/tv_shows
+
+srtransmissiondata:
+  build: transmission
+  entrypoint: /bin/echo
+  command: data for srtransmission
+  volumes:
+    - /transmission
+srtransmission:
   build: transmission
   command: docker-start
-  hostname: transmission
+  restart: always
+  hostname: sr-transmission
   cap_add:
     - MKNOD
     - NET_ADMIN
   expose:
     - 9091
-  env_file: transmission/.env
+  env_file: transmission/.sr.env
   volumes_from:
     - localtime
+    - srtransmissiondata
+    - showdownloads
+
+
+cptransmissiondata:
+  build: transmission
+  entrypoint: /bin/echo
+  command: data for transmission2
   volumes:
-    - /downloads
+    - /transmission
+cptransmission:
+  build: transmission
+  command: docker-start
+  restart: always
+  hostname: cp-transmission
+  cap_add:
+    - MKNOD
+    - NET_ADMIN
+  expose:
+    - 9091
+  env_file: transmission/.cp.env
+  volumes_from:
+    - localtime
+    - cptransmissiondata
+    - moviedownloads
 
 sickragedata:
   build: sickrage
@@ -80,8 +123,11 @@ sickragedata:
 sickrage:
   build: sickrage
   command: docker-start
+  restart: always
   hostname: sickrage
   dns: 127.0.0.1
+  links:
+    - "srtransmission:transmission"
   cap_add:
     - NET_ADMIN
   ports:
@@ -90,7 +136,7 @@ sickrage:
   volumes_from:
     - localtime
     - sickragedata
-    - transmission
+    - showdownloads
   volumes:
     - /data/tv_shows:/tv_shows
 
@@ -103,8 +149,11 @@ couchpotatodata:
 couchpotato:
   build: couchpotato
   command: docker-start
+  restart: always
   hostname: couchpotato
   dns: 127.0.0.1
+  links:
+    - "cptransmission:transmission"
   cap_add:
     - NET_ADMIN
   ports:
@@ -113,7 +162,7 @@ couchpotato:
   volumes_from:
     - localtime
     - couchpotatodata
-    - transmission
+    - moviedownloads
   volumes:
     - /data/movies:/movies
 
@@ -126,6 +175,7 @@ plexdata:
 plex:
   build: plex
   command: docker-start
+  restart: always
   hostname: plexmediaserver
   env_file: plex/.env
   ports:
