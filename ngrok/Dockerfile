@@ -9,7 +9,7 @@ RUN apt-get install -y --no-install-recommends unzip curl &&\
     unzip -d /usr/local/bin ngrok.zip &&\
     rm -rf ngrok.zip /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
+RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.1.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin
 
 ADD configs /templates/

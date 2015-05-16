@@ -8,7 +8,7 @@ RUN apt-get install --no-install-recommends -y --force-yes \
     gettext-base curl wget ca-certificates \
     avahi-daemon avahi-utils supervisor
 
-RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.0.0/tnator-linux-amd64.tar.gz |\
+RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.1.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin
 
 RUN curl -#kL https://github.com/albertrdixon/escarole/releases/download/v0.1.0/escarole-linux.tar.gz |\
