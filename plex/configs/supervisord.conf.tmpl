@@ -1,5 +1,4 @@
-{{ dir "/etc/supervisor" }}{{ name "supervisord.conf" }}
-[supervisord]
+{{ path "/etc/supervisor" }}[supervisord]
 nodaemon         = true
 user             = root
 loglevel         = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}

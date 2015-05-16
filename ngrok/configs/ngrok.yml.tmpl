@@ -1,4 +1,3 @@
-{{ dir "/root/.ngrok2" }}{{ name "ngrok.yml" }}
 {{ if has_key .Env "AUTH_TOKEN" }}authtoken: {{ .Env.AUTH_TOKEN }}{{ end }}
 web_addr: 0.0.0.0:4040
 update: false
@@ -34,4 +33,4 @@ tunnels:
     addr: 22
     remote_addr: {{ .Env.SSH_REMOTE_ADDR }}
 {{ end }}
-
+{{ path "/root/.ngrok2" }}

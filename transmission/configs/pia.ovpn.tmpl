@@ -16,4 +16,4 @@ crl-verify pia.pem
 log {{ .Env.OPENVPN_LOG }}
 verb {{ .Env.OPENVPN_VERB }}
 mute 10
-{{ dir .Env.OPENVPN_HOME }}{{ name "pia.ovpn" }}
+{{ path .Env.OPENVPN_HOME }}
