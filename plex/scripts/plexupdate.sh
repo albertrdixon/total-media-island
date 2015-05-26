@@ -40,9 +40,11 @@
 : ${PKGEXT:='.deb'}
 
 # Sanity check
-if [ -z "${PLEX_USERNAME}" -o -z "${PLEX_PASSWORD}" ] && [[ "${PUBLIC}" == "no" ]]; then
-  echo "Error: Need username & password to download PlexPass version. Otherwise run with -p to download public version."
-  exit 1
+if [ -z "$PLEX_USERNAME" ] || [ -z "$PLEX_PASSWORD" ]; then
+  [ "$PUBLIC" = "no" ] && {
+    echo "Error: Need username & password to download PlexPass version. Otherwise run with -p to download public version."
+    exit 1
+  }
 fi
 
 [ -d "/etc/plexupdate" ] || mkdir /etc/plexupdate
@@ -91,7 +93,7 @@ trap cleanup EXIT 2 9 15
 # commit    Sign in
 
 # If user wants, we skip authentication, but only if previous auth exists
-if [[ ! -f /tmp/kaka ]] && [[ "${PUBLIC}" =~ "^[nN]" ]]; then
+if [[ ! -f /tmp/kaka ]] && [ "$PUBLIC" = "no" ]; then
   echo -n "Authenticating..."
   # Clean old session
   rm /tmp/kaka 2>/dev/null
@@ -126,6 +128,7 @@ if [[ ! -f /tmp/kaka ]] && [[ "${PUBLIC}" =~ "^[nN]" ]]; then
   echo "OK"
 else
   # It's a public version, so change URL and make doubly sure that cookies are empty
+  echo "Using public version"
   rm 2>/dev/null >/dev/null /tmp/kaka
   touch /tmp/kaka
   URL_DOWNLOAD=${URL_DOWNLOAD_PUBLIC}
