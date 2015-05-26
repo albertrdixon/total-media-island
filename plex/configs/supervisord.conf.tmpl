@@ -1,19 +1,19 @@
-{{ path "/etc/supervisor" }}[supervisord]
+{{ path "/etc/supervisor" }}[unix_http_server]
+file  = /supervisor.sock
+chmod = 0777
+
+[supervisord]
 nodaemon         = true
 user             = root
 loglevel         = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}
 logfile          = /dev/stderr
 logfile_maxbytes = 0
 
-[unix_http_server]
-file  = /var/run/supervisor.sock
-chmod = 0700
-
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
-serverurl = unix:///var/run/supervisor.sock
+serverurl = unix:///supervisor.sock
 
 [program:plexmediaserver]
 command                 = /usr/local/bin/start_pms

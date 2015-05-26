@@ -1,17 +1,19 @@
-{{ path "/etc" }}[supervisord]
-nodaemon  = true
-user      = root
-loglevel  = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}
+{{ path "/etc" }}[unix_http_server]
+file  = /supervisor.sock
+chmod = 0777
 
-[unix_http_server]
-file=/var/run/supervisor.sock
-chmod=0700
+[supervisord]
+nodaemon         = true
+user             = root
+loglevel         = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}
+logfile          = /dev/stderr
+logfile_maxbytes = 0
 
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
-serverurl=unix:///var/run/supervisor.sock
+serverurl = unix:///supervisor.sock
 
 [program:pia]
 command                 = python -u /usr/local/bin/pia_transmission_monitor.py
