@@ -1,4 +1,4 @@
-FROM ubuntu:utopic
+FROM debian:jessie
 MAINTAINER Albert Dixon <albert.dixon@schange.com>
 
 ENV DEBIAN_FRONTEND noninteractive
