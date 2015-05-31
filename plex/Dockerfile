@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update -qq
 RUN apt-get install --no-install-recommends -y --force-yes \
     gettext-base curl wget ca-certificates \
-    avahi-daemon avahi-utils supervisor
+    avahi-daemon avahi-utils supervisor unzip
 
 RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.1.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin
@@ -25,6 +25,9 @@ RUN chown root:root /usr/local/bin/* &&\
     chmod a+rx /usr/local/bin/* &&\
     mkdir -p /plexupdate /plexmediaserver &&\
     touch /first_run
+
+# Unsupported App Store
+ADD http://bit.ly/ihqmEu /uas.zip
 
 ENTRYPOINT ["docker-entry"]
 CMD ["docker-start"]
