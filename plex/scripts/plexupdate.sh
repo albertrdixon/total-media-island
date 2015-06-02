@@ -169,14 +169,14 @@ echo "OK"
 
 if [[ -e /first_run ]]; then
   dpkg -i "${DOWNLOADDIR}/${FILENAME}"
-  stop plexmediaserver
+  service plexmediaserver stop
   rm -f /usr/sbin/start_pms
   rm -f /first_run
   rm -f "${DOWNLOADDIR}/${FILENAME}"
 elif [[ "${AUTOINSTALL}" =~ "^[yY]" ]]; then
   supervisorctl stop plexmediaserver
   dpkg -i "${DOWNLOADDIR}/${FILENAME}"
-  stop plexmediaserver
+  service plexmediaserver stop
   rm -f /usr/sbin/start_pms
   supervisorctl start plexmediaserver
   rm -f "${DOWNLOADDIR}/${FILENAME}"

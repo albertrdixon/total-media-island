@@ -8,6 +8,7 @@ if [ -z "$PLEX_USERNAME" ] || [ -z "$PLEX_PASSWORD" ]; then
 fi
 
 /usr/local/bin/plexupdate.sh
-unzip /uas.zip -d "plexmediaserver/Plex Media Server/Plug-ins"
+[ -d "/plexmediaserver/Plex Media Server/Plug-ins" ] || mkdir -p "/plexmediaserver/Plex Media Server/Plug-ins"
+unzip /uas.zip -d "/plexmediaserver/Plex Media Server/Plug-ins"
 exec -a "supervisord" "/usr/bin/supervisord" "-c" "/etc/supervisor/supervisord.conf"
 exit 0

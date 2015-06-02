@@ -1,10 +1,3 @@
-localtime:
-  image: busybox:latest
-  command: true
-  volumes:
-    - /etc/timezone:/etc/timezone:ro
-    - /etc/localtime:/etc/localtime:ro
-
 proxy:
   image: jwilder/nginx-proxy
   restart: always
@@ -86,8 +79,10 @@ srtransmission:
   expose:
     - 9091
   env_file: transmission/.sr.env
+  volumes:
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
   volumes_from:
-    - localtime
     - srtransmissiondata
     - showdownloads
 
@@ -109,17 +104,13 @@ cptransmission:
   expose:
     - 9091
   env_file: transmission/.cp.env
+  volumes:
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
   volumes_from:
-    - localtime
     - cptransmissiondata
     - moviedownloads
 
-sickragedata:
-  build: sickrage
-  entrypoint: /bin/echo
-  command: data for sickrage
-  volumes:
-    - /data
 sickrage:
   build: sickrage
   command: docker-start
@@ -134,18 +125,13 @@ sickrage:
     - "8081:8081"
   env_file: sickrage/.env
   volumes_from:
-    - localtime
-    - sickragedata
     - showdownloads
   volumes:
     - /data/tv_shows:/tv_shows
+    - /opt/sickrage:/data
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
 
-couchpotatodata:
-  build: couchpotato
-  entrypoint: /bin/echo
-  command: data for couchpotato
-  volumes:
-    - /data
 couchpotato:
   build: couchpotato
   command: docker-start
@@ -160,18 +146,13 @@ couchpotato:
     - "5050:5050"
   env_file: couchpotato/.env
   volumes_from:
-    - localtime
-    - couchpotatodata
     - moviedownloads
   volumes:
     - /data/movies:/movies
+    - /opt/couchpotato:/data
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
 
-plexdata:
-  build: plex
-  entrypoint: /bin/echo
-  command: data for plex
-  volumes:
-    - /plexmediaserver
 plex:
   build: plex
   command: docker-start
@@ -192,9 +173,10 @@ plex:
     - "32469:32469"
   volumes:
     - /data:/data
+    - /opt/plex:/plexmediaserver
+    - /etc/timezone:/etc/timezone:ro
+    - /etc/localtime:/etc/localtime:ro
   volumes_from:
-    - localtime
-    - plexdata
   cap_add:
     - NET_ADMIN
     - NET_BROADCAST
