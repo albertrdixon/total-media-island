@@ -19,6 +19,7 @@ class TorrentCleanerThread(Thread):
     self.log = logger
     self.finished = False
     self.client = None
+    self.torrents = {}
 
   def clean(self):
     self._clean.set()
@@ -52,24 +53,34 @@ class TorrentCleanerThread(Thread):
           self.client = self.client or transmissionrpc.Client(self.host, port=self.port)
           self.log.debug("Getting list of torrents.")
           torrents = self.client.get_torrents()
+          t_ids = [i.id for i in torrents]
+          for rm in [t for t in self.torrents if t not in t_ids]:
+            self.log.info("Removing '{}' from torrent list".format(self.torrents[rm]["name"]))
+            self.torrents.pop(rm, None)
           if not torrents:
             self.log.info("No torrents to process!")
             self.finished = True
           else:
             for torrent in torrents:
               self.should_quit()
-              remove = False
-              self.log.info("Torrent #{}: '{}'.".format(torrent.id, torrent.name))
+              if torrent.id not in self.torrents:
+                self.torrents[torrent.id] = {"name": torrent.name, "reason": "", "strikes": 0}
+              t = self.torrents[torrent.id]
               if torrent_finished(torrent, self.ratio):
-                self.log.info("Torrent #{} ('{}') is finished, removing.".format(torrent.id, torrent.name))
-                remove = True
+                self.log.info("Torrent #{} ('{}') reporting finished.".format(torrent.id, torrent.name))
+                t["strikes"] += 1
+                t["reason"] = "finished (Done: {}, Ratio: {})".format(torrent.isFinished, torrent.ratio)
               elif torrent_stalled(torrent):
-                self.log.info("Torrent #{} ('{}') is stalled, removing.".format(torrent.id, torrent.name))
-                remove = True
-              if remove:
+                self.log.info("Torrent #{} ('{}') reporting stalled.".format(torrent.id, torrent.name))
+                t["strikes"] += 1
+                t["reason"] = "stalled (Stalled: {}, Status: {})".format(torrent.isStalled, torrent.status)
+              self.torrents[torrent.id] = t
+              if t["strikes"] >= 2:
+                self.log.info("Torrent #{} ('{}') being removed because it is {}".format(torrent.id, torrent.name, t["reason"]))
                 self.client.remove_torrent(torrent.id, delete_data=True)
+                self.torrents.pop(torrent.id, None)
               else:
-                self.log.info("Torrent #{} ('{}') is still active, skipping.".format(torrent.id, torrent.name))
+                self.log.info("Torrent #{} ('{}') is still active (Progress: {}%, Ratio: {})".format(torrent.id, torrent.name, torrent.progress, torrent.ratio))
             else:
               self.finished = True
         except Exception, e:
