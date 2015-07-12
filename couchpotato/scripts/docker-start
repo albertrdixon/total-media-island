@@ -9,7 +9,5 @@ cd $COUCHPOTATO_HOME
 git checkout $COUCHPOTATO_CHANNEL
 git pull --verbose
 
-. /venv/bin/activate
-export PYTHONPATH=$COUCHPOTATO_HOME
-exec -a "supervisord" "supervisord" "-c" "/etc/supervisord.conf"
+exec -a "supervisord" "supervisord" "-c" "/etc/supervisor/supervisord.conf"
 exit 0

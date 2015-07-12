@@ -1,4 +1,4 @@
-{{ path "/etc" }}[unix_http_server]
+{{ path "/etc/supervisor" }}[unix_http_server]
 file  = /supervisor.sock
 chmod = 0777
 
@@ -6,8 +6,6 @@ chmod = 0777
 nodaemon         = true
 user             = root
 loglevel         = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}
-logfile          = /dev/stderr
-logfile_maxbytes = 0
 
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
@@ -20,17 +18,19 @@ command = python CouchPotato.py --data_dir {{ default .Env.CP_DATA_DIR "/data" }
 directory               = {{ default .Env.COUCHPOTATO_HOME "/couchpotato" }}
 user                    = root
 autostart               = true
-autorestart             = unexpected
+autorestart             = true
 stopsignal              = TERM
 stopasgroup             = true
-stopwaitsecs            = 10
+stopwaitsecs            = 15
 stdout_logfile          = /dev/stderr
 stdout_logfile_maxbytes = 0
 stderr_logfile          = /dev/stderr
 stderr_logfile_maxbytes = 0
 
 [program:updater]
-command                 = escarole -C /escarole.yaml
+command                 = escarole -C /escarole.yaml -i {{ default .Env.UPDATE_INTERVAL "4h" }}
+user                    = root
+autostart               = true
 stdout_logfile          = /dev/stderr
 stdout_logfile_maxbytes = 0
 stderr_logfile          = /dev/stderr
