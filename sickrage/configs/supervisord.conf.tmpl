@@ -19,7 +19,7 @@ serverurl = unix:///supervisor.sock
 command = python -u SickBeard.py --datadir={{ default .Env.SB_DATA "/data" }} --config={{ default .Env.SB_DATA "/data" }}/config.ini
 directory               = {{ default .Env.SB_HOME "/sickrage" }}
 autostart               = true
-autorestart             = unexpected
+autorestart             = true
 stopsignal              = TERM
 stopasgroup             = true
 stopwaitsecs            = 10

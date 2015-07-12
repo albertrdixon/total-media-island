@@ -9,6 +9,8 @@ fi
 
 /usr/local/bin/plexupdate.sh
 [ -d "/plexmediaserver/Plex Media Server/Plug-ins" ] || mkdir -p "/plexmediaserver/Plex Media Server/Plug-ins"
-unzip /uas.zip -d "/plexmediaserver/Plex Media Server/Plug-ins"
+if [ ! -e "/plexmediaserver/Plex Media Server/Plug-ins/UnSupportedAppstore.bundle" ]; then
+  unzip /uas.zip -d "/plexmediaserver/Plex Media Server/Plug-ins"
+fi
 exec -a "supervisord" "/usr/bin/supervisord" "-c" "/etc/supervisor/supervisord.conf"
 exit 0
