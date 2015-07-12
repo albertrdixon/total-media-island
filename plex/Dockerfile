@@ -3,7 +3,7 @@ MAINTAINER Albert Dixon <albert.dixon@schange.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update -qq
+RUN apt-get update
 RUN apt-get install --no-install-recommends -y --force-yes \
     gettext-base curl wget ca-certificates \
     avahi-daemon avahi-utils supervisor unzip

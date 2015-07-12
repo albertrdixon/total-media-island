@@ -6,8 +6,6 @@ chmod = 0777
 nodaemon         = true
 user             = root
 loglevel         = {{ default .Env.SUPERVISOR_LOG_LEVEL "INFO" }}
-logfile          = /dev/stderr
-logfile_maxbytes = 0
 
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
@@ -21,7 +19,7 @@ directory               = /usr/lib/plexmediaserver
 user                    = root
 pidfile                 = /plexmediaserver/pms.pid
 autostart               = true
-autorestart             = unexpected
+autorestart             = true
 stopasgroup             = true
 stdout_logfile          = /dev/stderr
 stdout_logfile_maxbytes = 0
