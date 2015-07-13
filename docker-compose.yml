@@ -73,6 +73,9 @@ srtransmission:
   command: docker-start
   restart: always
   hostname: sr-transmission
+  dns:
+    - 209.222.18.222
+    - 209.222.18.218
   cap_add:
     - MKNOD
     - NET_ADMIN
@@ -98,6 +101,9 @@ cptransmission:
   command: docker-start
   restart: always
   hostname: cp-transmission
+  dns:
+    - 209.222.18.222
+    - 209.222.18.218
   cap_add:
     - MKNOD
     - NET_ADMIN
