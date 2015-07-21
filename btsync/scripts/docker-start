@@ -1,6 +1,0 @@
-#!/bin/bash
-set -eo pipefail
-
-[ -d /btsync/.sync ] || mkdir -p /btsync/.sync
-exec -a "btsync" "btsync" "--config" "/btsync/btsync.conf" "--nodaemon"
-exit 0
