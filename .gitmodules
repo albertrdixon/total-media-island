@@ -4,3 +4,6 @@
 [submodule "sickrage"]
 	path = sickrage
 	url = https://github.com/albertrdixon/docker-sickrage.git
+[submodule "couchpotato"]
+	path = couchpotato
+	url = https://github.com/albertrdixon/docker-couchpotato.git
