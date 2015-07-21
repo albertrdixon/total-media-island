@@ -6,6 +6,7 @@ RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
     curl git python python-dev libssl-dev gcc \
     locales supervisor ca-certificates dnsmasq \
+    libxml2-dev libxslt-dev \
     && curl -#kL https://bootstrap.pypa.io/get-pip.py | python
 
 RUN dpkg-reconfigure locales && \

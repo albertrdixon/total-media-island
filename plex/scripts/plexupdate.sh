@@ -173,7 +173,7 @@ if [[ -e /first_run ]]; then
   rm -f /usr/sbin/start_pms
   rm -f /first_run
   rm -f "${DOWNLOADDIR}/${FILENAME}"
-elif [[ "${AUTOINSTALL}" =~ "^[yY]" ]]; then
+elif [[ "${AUTOINSTALL}" = "yes" ]]; then
   supervisorctl stop plexmediaserver
   dpkg -i "${DOWNLOADDIR}/${FILENAME}"
   service plexmediaserver stop

@@ -5,8 +5,8 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y --force-yes \
-    gettext-base curl wget ca-certificates \
-    avahi-daemon avahi-utils supervisor unzip
+    curl wget ca-certificates avahi-daemon \
+    avahi-utils supervisor unzip
 
 RUN curl -#kL https://github.com/albertrdixon/tmplnator/releases/download/v2.1.0/tnator-linux-amd64.tar.gz |\
     tar xvz -C /usr/local/bin

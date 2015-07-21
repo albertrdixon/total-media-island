@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
     curl git python locales supervisor \
-    ca-certificates dnsmasq
+    ca-certificates dnsmasq 
 
 RUN dpkg-reconfigure locales && \
     locale-gen C.UTF-8 && \
