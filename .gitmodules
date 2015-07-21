@@ -10,3 +10,6 @@
 [submodule "plex"]
 	path = plex
 	url = https://github.com/albertrdixon/docker-plex.git
+[submodule "btsync"]
+	path = btsync
+	url = https://github.com/albertrdixon/docker-btsync.git
