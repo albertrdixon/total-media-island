@@ -13,7 +13,8 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=/usr/bin/docker pull albertdixon/transmission:latest
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --name %p -t \
+  "/usr/bin/docker start %p || \
+  /usr/bin/docker run --name %p \
     --entrypoint /bin/echo \
     --volume /transmission \
     albertdixon/transmission:latest 'Data for Couchpotato Transmission'"
