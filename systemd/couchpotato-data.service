@@ -1,7 +1,7 @@
 [Unit]
 Description=movie downloader
 Documentation=https://couchpota.to/ 
-Require=docker.service
+Requires=docker.service
 After=docker.service
 Before=couchpotato.service
 

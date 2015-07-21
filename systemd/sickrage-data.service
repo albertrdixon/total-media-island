@@ -1,7 +1,7 @@
 [Unit]
 Description=tv show downloader
 Documentation=https://www.sickrage.tv/ 
-Require=docker.service
+Requires=docker.service
 After=docker.service
 Before=sickrage.service
 
