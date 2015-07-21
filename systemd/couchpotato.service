@@ -1,0 +1,32 @@
+[Unit]
+Description=movie downloader
+Documentation=https://couchpota.to/
+Requires=docker.service movie-downloads.service couchpotato-transmission.service
+After=docker.service movie-downloads.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull albertdixon/couchpotato:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p -t \
+    --hostname %p \
+    --volumes-from movie-downloads \
+    --volumes-from %p-data \
+    --volume /etc/timezone:/etc/timezone:ro \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --publish 5050:5050 \
+    --env VIRTUAL_HOST=%p.$(hostname -f) \
+    --env VIRTUAL_POST=8081 \
+    --env-file /etc/sysconfig/%p \
+    albertdixon/couchpotato:latest docker-start"
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

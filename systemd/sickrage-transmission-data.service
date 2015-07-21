@@ -1,0 +1,25 @@
+[Unit]
+Description=sickrage transmission data
+Documentation=https://github.com/albertrdixon/docker-transmission
+Requires=docker.service
+After=docker.service
+Before=sickrage-transmission.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=20m
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=/usr/bin/docker pull albertdixon/transmission:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --name %p -t \
+    --entrypoint /bin/echo \
+    --volume /transmission \
+    albertdixon/transmission:latest 'Data for Sickrage Transmission'"
+SuccessExitStatus=0 1 2
+Restart=no
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

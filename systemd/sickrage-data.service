@@ -1,0 +1,25 @@
+[Unit]
+Description=tv show downloader
+Documentation=https://www.sickrage.tv/ 
+Require=docker.service
+After=docker.service
+Before=sickrage.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=20m
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=/usr/bin/docker pull albertdixon/sickrage:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --name %p \
+    --entrypoint /bin/echo \
+    --volume /data \
+    albertdixon/sickrage:latest 'Data for Sickrage'"
+SuccessExitStatus=0 1 2
+Restart=no
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

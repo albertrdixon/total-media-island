@@ -1,0 +1,33 @@
+[Unit]
+Description=torrent client for sickrage with vpn
+Documentation=https://github.com/albertrdixon/docker-transmission
+Requires=docker.service sickrage-transmission-data.service tv-downloads.service
+After=docker.service sickrage-transmission-data.service tv-downloads.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull albertdixon/transmission:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p -t \
+    --volumes-from tv-downloads \
+    --volumes-from %p-data \
+    --volume /etc/timezone:/etc/timezone:ro \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --dns 209.222.18.222 --dns 209.222.18.218 \
+    --cap-add MKNOD --cap-add NET_ADMIN \
+    --expose 9091 --hostname %p \
+    --env VIRTUAL_HOST=%p.$(hostname -f) \
+    --env VIRTUAL_PORT=9091 \
+    --env-file /etc/sysconfig/%p \
+    albertdixon/transmission:latest docker-start"
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,23 @@
+[Unit]
+Description=nginx docker proxy
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull jwilder/nginx-proxy:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p -t \
+    -v /var/run/docker.sock:/tmp/docker.sock:ro \
+    -p 80:80 jwilder/nginx-proxy:latest"
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

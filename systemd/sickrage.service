@@ -1,0 +1,32 @@
+[Unit]
+Description=tv show downloader
+Documentation=https://www.sickrage.tv/ 
+Requires=docker.service tv-downloads.service sickrage-transmission.service
+After=docker.service tv-downloads.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull albertdixon/sickrage:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p -t \
+    --hostname %p \
+    --volumes-from tv-downloads \
+    --volumes-from %p-data \
+    --volume /etc/timezone:/etc/timezone:ro \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --publish 8081:8081 \
+    --env VIRTUAL_HOST=%p.$(hostname -f) \
+    --env VIRTUAL_POST=8081 \
+    --env-file /etc/sysconfig/%p \
+    albertdixon/sickrage:latest docker-start"
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

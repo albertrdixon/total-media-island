@@ -1,0 +1,25 @@
+[Unit]
+Description=plex media server data
+Documentation=https://plex.tv https://github.com/albertrdixon/docker-plex
+Requires=docker.service
+After=docker.service
+Before=plex.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=20m
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=/usr/bin/docker pull albertdixon/plex:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --name %p \
+    --entrypoint /bin/echo \
+    --volume /plexmediaserver \
+    albertdixon/plex:latest 'Data for Plex Media Server'"
+SuccessExitStatus=0 1 2
+Restart=no
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

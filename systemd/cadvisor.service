@@ -1,0 +1,30 @@
+[Unit]
+Description=google cadvisor
+Documentation=https://github.com/google/cadvisor
+Requires=docker.service
+After=docker.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker pull google/cadvisor:latest
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run -t --rm --name %p \
+    --volume=/:/rootfs:ro \
+    --volume=/var/run:/var/run:rw \
+    --volume=/sys:/sys:ro \
+    --volume=/var/lib/docker/:/var/lib/docker:ro \
+    --expose 8080 \
+    --env VIRTUAL_HOST=%p-$(hostname -f) \
+    --env VIRTUAL_PORT=8080 \
+    google/cadvisor:latest"
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target
