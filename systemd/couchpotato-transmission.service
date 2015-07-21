@@ -22,7 +22,7 @@ ExecStart=/bin/bash -c \
     --dns 209.222.18.222 --dns 209.222.18.218 \
     --cap-add MKNOD --cap-add NET_ADMIN \
     --expose 9091 --hostname %p \
-    --env VIRTUAL_HOST=%p.$(hostname -f) \
+    --env VIRTUAL_HOST=%p.$(hostname -d) \
     --env VIRTUAL_PORT=9091 \
     --env-file /etc/sysconfig/%p \
     albertdixon/transmission:latest"
