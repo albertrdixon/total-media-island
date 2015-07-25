@@ -1,9 +1,10 @@
 [Unit]
 Description=movie downloader
-Documentation=https://couchpota.to/ 
-Requires=docker.service
-After=docker.service
+Documentation=https://couchpota.to/
+Wants=docker.service network-online.target 
+After=docker.service network-online.target
 Before=couchpotato.service
+Requires=docker.service network-online.target
 
 [Service]
 Type=oneshot
@@ -11,7 +12,7 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
   /usr/bin/docker run --name %p \

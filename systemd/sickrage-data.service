@@ -1,8 +1,9 @@
 [Unit]
 Description=tv show downloader
 Documentation=https://www.sickrage.tv/ 
-Requires=docker.service
-After=docker.service
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
 Before=sickrage.service
 
 [Service]
@@ -11,7 +12,7 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/sickrage:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/sickrage:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
   /usr/bin/docker run --name %p \

@@ -1,8 +1,9 @@
 [Unit]
 Description=movie downloader
 Documentation=https://couchpota.to/
-Requires=docker.service movie-downloads.service couchpotato-transmission.service
-After=docker.service movie-downloads.service
+Wants=docker.service network-online.target
+After=docker.service movie-downloads.service network-online.target
+Requires=docker.service movie-downloads.service couchpotato-transmission.service network-online.target
 
 [Service]
 TimeoutStartSec=20m
@@ -12,9 +13,9 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p -t \
+  "/usr/local/bin/systemd-docker run --rm --name %p -t \
     --hostname %p \
     --volumes-from movie-downloads \
     --volumes-from %p-data \

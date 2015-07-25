@@ -1,8 +1,9 @@
 [Unit]
 Description=torrent client for couchpotato with vpn
 Documentation=https://github.com/albertrdixon/docker-transmission
-Requires=docker.service couchpotato-transmission-data.service movie-downloads.service
-After=docker.service couchpotato-transmission-data.service movie-downloads.service
+Wants=docker.service couchpotato-transmission-data.service movie-downloads.service network-online.target
+Requires=docker.service couchpotato-transmission-data.service movie-downloads.service network-online.target
+After=docker.service couchpotato-transmission-data.service movie-downloads.service network-online.target
 
 [Service]
 TimeoutStartSec=20m
@@ -12,9 +13,9 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/transmission:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/transmission:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p -t \
+  "/usr/local/bin/systemd-docker run --rm --name %p -t \
     --volumes-from movie-downloads \
     --volumes-from couchpotato-transmission-data \
     --volume /etc/timezone:/etc/timezone:ro \

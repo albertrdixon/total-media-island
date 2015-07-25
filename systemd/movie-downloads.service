@@ -1,7 +1,8 @@
 [Unit]
 Description=data volume for movie downloads
-Requires=docker.service
-After=docker.service
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
 
 [Service]
 Type=oneshot
@@ -9,7 +10,7 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/usr/bin/docker pull busybox:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull busybox:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
   /usr/bin/docker run --name %p \

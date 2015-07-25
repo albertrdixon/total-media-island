@@ -1,8 +1,9 @@
 [Unit]
 Description=plex media server
 Documentation=https://plex.tv https://github.com/albertrdixon/docker-plex
-Requires=docker.service plex-data.service
-After=docker.service plex-data.service
+Wants=docker.service network-online.target
+Requires=docker.service plex-data.service network-online.target
+After=docker.service plex-data.service network-online.target
 
 [Service]
 TimeoutStartSec=20m
@@ -12,9 +13,9 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull albertdixon/plex:latest
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull albertdixon/plex:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p -t \
+  "/usr/local/bin/systemd-docker run --rm --name %p -t \
     --volumes-from plex-data -v /data:/data \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
