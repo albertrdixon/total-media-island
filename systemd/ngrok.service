@@ -19,7 +19,7 @@ ExecStart=/bin/bash -c \
     --net=host \
     --env VIRTUAL_HOST %p.$(hostname -d) \
     --env VIRTUAL_PORT 4040 \
-    --cap-add NET_ADMIN
+    --cap-add NET_ADMIN \
     quay.io/albertrdixon/ngrok:latest docker-start"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/usr/bin/docker restart %p
