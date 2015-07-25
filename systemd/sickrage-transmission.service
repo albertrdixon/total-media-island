@@ -12,7 +12,7 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull albertdixon/transmission:latest
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/transmission:latest
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
     --volumes-from tv-downloads \
@@ -25,7 +25,7 @@ ExecStart=/bin/bash -c \
     --env VIRTUAL_HOST=%p.$(hostname -d) \
     --env VIRTUAL_PORT=9091 \
     --env-file /etc/sysconfig/%p \
-    albertdixon/transmission:latest docker-start"
+    quay.io/albertrdixon/transmission:latest docker-start"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 

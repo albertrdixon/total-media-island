@@ -12,7 +12,7 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker pull albertdixon/sickrage:latest
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/sickrage:latest
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
     --hostname %p \
@@ -24,7 +24,7 @@ ExecStart=/bin/bash -c \
     --env VIRTUAL_HOST=%p.$(hostname -d) \
     --env VIRTUAL_POST=8081 \
     --env-file /etc/sysconfig/%p \
-    albertdixon/sickrage:latest docker-start"
+    quay.io/albertrdixon/sickrage:latest docker-start"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 

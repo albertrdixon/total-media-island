@@ -1,10 +1,8 @@
 [Unit]
 Description=plex media server
 Documentation=https://plex.tv https://github.com/albertrdixon/docker-plex
-Requires=docker.service
-Requires=plex-data.service
-After=docker.service
-After=plex-data.service
+Requires=docker.service plex-data.service
+After=docker.service plex-data.service
 
 [Service]
 TimeoutStartSec=20m

@@ -11,13 +11,13 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/usr/bin/docker pull albertdixon/sickrage:latest
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/sickrage:latest
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
   /usr/bin/docker run --name %p \
     --entrypoint /bin/echo \
     --volume /data \
-    albertdixon/sickrage:latest 'Data for Sickrage'"
+    quay.io/albertrdixon/sickrage:latest 'Data for Sickrage'"
 SuccessExitStatus=0 1 2
 Restart=no
 RemainAfterExit=yes
