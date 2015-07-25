@@ -15,7 +15,7 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull google/cadvisor:latest"
 ExecStart=/bin/bash -c \
-  "/usr/local/bin/systemd-docker run -t --rm --name %p \
+  "/usr/bin/docker run -t --rm --name %p \
     --volume=/:/rootfs:ro \
     --volume=/var/run:/var/run:rw \
     --volume=/sys:/sys:ro \

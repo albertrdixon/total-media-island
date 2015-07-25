@@ -15,7 +15,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull albertdixon/plex:latest"
 ExecStart=/bin/bash -c \
-  "/usr/local/bin/systemd-docker run --rm --name %p -t \
+  "/usr/bin/docker run --rm --name %p -t \
     --volumes-from plex-data -v /data:/data \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \

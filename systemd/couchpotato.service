@@ -15,7 +15,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
 ExecStart=/bin/bash -c \
-  "/usr/local/bin/systemd-docker run --rm --name %p -t \
+  "/usr/bin/docker run --rm --name %p -t \
     --hostname %p \
     --volumes-from movie-downloads \
     --volumes-from %p-data \

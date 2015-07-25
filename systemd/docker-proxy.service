@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull jwilder/nginx-proxy:latest"
 ExecStart=/bin/bash -c \
-  "/usr/local/bin/systemd-docker run --rm --name %p -t \
+  "/usr/bin/docker run --rm --name %p -t \
     -v /var/run/docker.sock:/tmp/docker.sock:ro \
     -p 80:80 jwilder/nginx-proxy:latest"
 ExecStop=/usr/bin/docker stop %p
