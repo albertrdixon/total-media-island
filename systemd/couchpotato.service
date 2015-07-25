@@ -30,4 +30,4 @@ ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
 [Install]
-WantedBy=media-ingest.target
+WantedBy=multi-user.target

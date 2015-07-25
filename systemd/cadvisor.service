@@ -11,8 +11,8 @@ Restart=on-failure
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=-/usr/bin/docker kill %p
-ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull google/cadvisor:latest"
 ExecStart=/bin/bash -c \
   "/usr/local/bin/systemd-docker run -t --rm --name %p \
@@ -24,7 +24,7 @@ ExecStart=/bin/bash -c \
     --env VIRTUAL_HOST=%p-$(hostname -f) \
     --env VIRTUAL_PORT=8080 \
     google/cadvisor:latest"
-ExecStop=/usr/bin/docker stop %p
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/usr/bin/docker restart %p
 
 [Install]

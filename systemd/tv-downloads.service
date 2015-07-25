@@ -22,4 +22,4 @@ Restart=no
 RemainAfterExit=yes
 
 [Install]
-WantedBy=media-ingest.target
+WantedBy=multi-user.target
