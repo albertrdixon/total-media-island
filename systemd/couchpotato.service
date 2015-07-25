@@ -19,6 +19,7 @@ ExecStart=/bin/bash -c \
     --hostname %p \
     --volumes-from movie-downloads \
     --volumes-from %p-data \
+    --volumes /data/movies:/movies \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --publish 5050:5050 \
