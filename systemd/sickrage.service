@@ -19,7 +19,7 @@ ExecStart=/bin/bash -c \
     --hostname %p \
     --volumes-from tv-downloads \
     --volumes-from %p-data \
-    --volume /data:/tv_shows:/tv_shows \
+    --volume /data/tv_shows:/tv_shows \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --publish 8081:8081 \
