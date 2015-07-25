@@ -13,3 +13,7 @@
 [submodule "btsync"]
 	path = btsync
 	url = https://github.com/albertrdixon/docker-btsync.git
+[submodule "docker-sickrage"]
+	path = docker-sickrage
+	url = https://github.com/albertrdixon/docker-sickrage.git
+	branch = master
