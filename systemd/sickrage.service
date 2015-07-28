@@ -24,7 +24,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/localtime:/etc/localtime:ro \
     --publish 8081:8081 \
     --env VIRTUAL_HOST=%p.$(hostname -d) \
-    --env VIRTUAL_POST=8081 \
+    --env VIRTUAL_PORT=8081 \
     --env-file /etc/sysconfig/%p \
     quay.io/albertrdixon/sickrage:latest docker-start"
 ExecStop=/usr/bin/docker stop %p
