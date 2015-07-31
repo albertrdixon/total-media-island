@@ -13,7 +13,7 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull albertdixon/plex:latest"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/plex:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
     --volumes-from plex-data \
@@ -30,7 +30,7 @@ ExecStart=/bin/bash -c \
     --env VIRTUAL_HOST=%p.$(hostname -d) \
     --env VIRTUAL_PORT=32400 \
     --env-file /etc/sysconfig/%p \
-    albertdixon/plex:latest docker-start"
+    quay.io/albertrdixon/plex:latest docker-start"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 

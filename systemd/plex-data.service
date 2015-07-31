@@ -12,13 +12,13 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull albertdixon/plex:latest"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/plex:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
   /usr/bin/docker run --name %p \
     --entrypoint /bin/echo \
     --volume /plexmediaserver \
-    albertdixon/plex:latest 'Data for Plex Media Server'"
+    quay.io/albertrdixon/plex:latest 'Data for Plex Media Server'"
 SuccessExitStatus=0 1 2
 Restart=no
 RemainAfterExit=yes
