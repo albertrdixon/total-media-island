@@ -1,0 +1,30 @@
+[Unit]
+Description=rss watcher for couchpotato torrent downloader
+Documentation=https://github.com/albertrdixon/docker-transmission-rss
+Wants=docker.service couchpotato-transmission.service network-online.target
+Requires=docker.service couchpotato-transmission.service network-online.target
+After=docker.service couchpotato-transmission.service network-online.target
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/transmission-rss:latest"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p -t \
+    --volume /etc/timezone:/etc/timezone:ro \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --volume /etc/sysconfig/%p/conf.yml:/etc/transmission-rss.conf \
+    --link couchpotato-transmission \
+    --hostname %p \
+    --env-file /etc/sysconfig/%p/env \
+    quay.io/albertrdixon/transmission-rss:latest"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/bin/bash -c "/usr/bin/docker restart %p"
+
+[Install]
+WantedBy=multi-user.target
