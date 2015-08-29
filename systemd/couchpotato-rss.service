@@ -19,7 +19,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --volume /etc/sysconfig/%p/conf.yml:/etc/transmission-rss.conf \
-    --link couchpotato-transmission \
+    --link couchpotato-transmission:transmission \
     --hostname %p \
     --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/transmission-rss:latest"
