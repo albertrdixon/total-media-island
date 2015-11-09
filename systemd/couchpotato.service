@@ -23,7 +23,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --publish 5050:5050 \
-    --env VIRTUAL_HOST=%p.$(hostname -d) \
+    --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=8081 \
     --env-file /etc/sysconfig/%p \
     quay.io/albertrdixon/couchpotato:latest docker-start"

@@ -1,6 +1,6 @@
 [Unit]
-Description=google cadvisor
-Documentation=https://github.com/google/cadvisor
+Description=bittorrent sync
+Documentation=https://btsync.org
 Wants=docker.service network-online.target
 After=docker.service network-online.target
 Requires=docker.service network-online.target
@@ -13,17 +13,14 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
 ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull google/cadvisor:latest"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/btsync:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run -t --rm --name %p \
-    --volume=/:/rootfs:ro \
-    --volume=/var/run:/var/run:rw \
-    --volume=/sys:/sys:ro \
-    --volume=/var/lib/docker/:/var/lib/docker:ro \
-    --expose 8080 \
-    --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
-    --env VIRTUAL_PORT=8080 \
-    google/cadvisor:latest"
+    --port 55555:55555 \
+    --env VIRTUAL_HOST=%p.$(hostname -d),%p \
+    --env VIRTUAL_PORT=8888 \
+    --env-file /etc/sysconfig/%p \
+    quay.io/albertrdixon/btsync:latest docker-start"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/usr/bin/docker restart %p
 
