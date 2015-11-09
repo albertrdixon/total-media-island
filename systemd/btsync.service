@@ -16,7 +16,10 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/btsync:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run -t --rm --name %p \
-    --port 55555:55555 \
+    --volume /data:/data \
+    --volumes-from btsync-data \
+    --port 3369:3369 \
+    --port 3369:3369/udp \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=8888 \
     --env-file /etc/sysconfig/%p \
