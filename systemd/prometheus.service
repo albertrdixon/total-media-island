@@ -21,7 +21,12 @@ ExecStart=/bin/bash -c \
     --expose 9090 \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=9090 \
-    prom/prometheus:latest -web.external-url 'http://%p'"
+    prom/prometheus:latest \
+      -web.external-url 'http://%p' \
+      -config.file=/etc/prometheus/prometheus.yml \
+      -storage.local.path=/prometheus \
+      -web.console.libraries=/etc/prometheus/console_libraries \
+      -web.console.templates=/etc/prometheus/consoles"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/usr/bin/docker restart %p
 
