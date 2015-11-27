@@ -22,6 +22,7 @@ ExecStartPre=/bin/bash -c \
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p \
     --expose 3000 \
+    --volume /opt/%p:/opt/%p \
     -e DATABASE_URL=sqlite3:/opt/%p/prom.sqlite3 \
     -e VIRTUAL_HOST=%p.$(hostname -d),%p \
     -e VIRTUAL_PORT=3000 \
