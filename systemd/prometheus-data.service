@@ -15,7 +15,7 @@ SyslogIdentifier=%p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/prometheus:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker create --name %p \
-    --volume /prometheus
+    --volume /prometheus \
     --entrypoint /bin/echo \
     prom/prometheus:latest 'Data for Prometheus'"
 SuccessExitStatus=0 1 2
