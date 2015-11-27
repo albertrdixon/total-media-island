@@ -1,0 +1,28 @@
+[Unit]
+Description=prometheus node exporter
+Documentation=https://github.com/prometheus/node_exporter
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/node-exporter"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run -t --rm --name %p \
+    --publish 9100:9100 \
+    --net host \
+    --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
+    --env VIRTUAL_PORT=9100 \
+    prom/node-exporter"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

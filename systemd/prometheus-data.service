@@ -1,0 +1,25 @@
+[Unit]
+Description=prometheus
+Documentation=https://prometheus.io
+Wants=docker.service network-online.target 
+After=docker.service network-online.target
+Before=prometheus.service
+Requires=docker.service network-online.target
+
+[Service]
+Type=oneshot
+TimeoutStartSec=20m
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/prometheus:latest"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker create --name %p \
+    --entrypoint /bin/echo \
+    prom/prometheus:latest 'Data for Prometheus'"
+SuccessExitStatus=0 1 2
+Restart=no
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,29 @@
+[Unit]
+Description=prometheus
+Documentation=https://prometheus.io
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/prometheus:latest"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run -t --rm --name %p \
+    --volume /etc/sysconfig/%p/prometheus.yml:/etc/prometheus/prometheus.yml \
+    --volumes-from %p-data \
+    --expose 9090 \
+    --env VIRTUAL_HOST=%p.$(hostname -d),%p \
+    --env VIRTUAL_PORT=9090 \
+    prom/prometheus:latest -web.external-url 'http://%p'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

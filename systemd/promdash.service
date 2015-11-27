@@ -1,0 +1,33 @@
+[Unit]
+Description=promdash
+Documentation=https://github.com/prometheus/promdash
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/promdash"
+ExecStartPre=/bin/bash -c \
+  "/usr/bin/docker run --rm \
+    --volume /opt/%p:/opt/%p \
+    -e DATABASE_URL=sqlite3:/opt/%p/prom.sqlite3 \
+    prom/promdash ./bin/rake db:migrate"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p \
+    --expose 3000 \
+    -e DATABASE_URL=sqlite3:/opt/%p/prom.sqlite3 \
+    -e VIRTUAL_HOST=%p.$(hostname -d),%p \
+    -e VIRTUAL_PORT=3000 \
+    prom/promdash"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

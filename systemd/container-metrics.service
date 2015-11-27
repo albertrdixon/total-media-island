@@ -1,0 +1,30 @@
+[Unit]
+Description=prometheus container exporter
+Documentation=https://github.com/docker-infra/container_exporter
+Wants=docker.service network-online.target
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+EnvironmentFile=-/etc/sysconfig/%p
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/container-exporter"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run -t --rm --name %p \
+    --publish 9104:9104 \
+    --volume /sys/fs/cgroup:/cgroup:ro \
+    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+    --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
+    --env VIRTUAL_PORT=9104 \
+    prom/container-exporter $OPTIONS"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target
