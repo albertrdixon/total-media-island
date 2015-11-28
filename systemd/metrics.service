@@ -11,8 +11,17 @@ Restart=on-failure
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-EnvironmentFile=-/etc/sysconfig/%p
-ExecStart=/usr/local/bin/node_exporter $OPTIONS
+ExecStartPre=-/bin/bash -c "/usr/bin/docker kill %p"
+ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/node-exporter"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run -t --rm --name %p \
+    --expose 9100 \
+    --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
+    --env VIRTUAL_PORT=9100 \
+    prom/node-exporter"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target
