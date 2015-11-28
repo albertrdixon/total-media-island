@@ -17,7 +17,6 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/node-exporter"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run -t --rm --name %p \
     --publish 9100:9100 \
-    --net host \
     --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
     --env VIRTUAL_PORT=9100 \
     prom/node-exporter"
