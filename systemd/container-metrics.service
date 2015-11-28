@@ -17,7 +17,7 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/container-exporter"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run -t --rm --name %p \
-    --publish 9104:9104 \
+    --expose 9104 \
     --volume /sys/fs/cgroup:/cgroup:ro \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
     --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \

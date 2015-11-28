@@ -16,10 +16,10 @@ ExecStartPre=-/bin/bash -c "/usr/bin/docker rm -f %p"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull prom/node-exporter"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run -t --rm --name %p \
-    --publish 9100:9100 \
+    --expose 9100 \
     --env VIRTUAL_HOST=%p-$(hostname -f),%p-$(hostname -s) \
     --env VIRTUAL_PORT=9100 \
-    prom/node-exporter"
+    prom/node-exporter -web.listen-address='0.0.0.0:9100'"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/usr/bin/docker restart %p
 
