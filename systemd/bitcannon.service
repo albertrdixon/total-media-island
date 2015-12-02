@@ -1,9 +1,9 @@
 [Unit]
 Description=local torrent cache
 Documentation=http://bitcannon.io/
-Wants=docker.service network-online.target
-Requires=docker.service network-online.target mongodb-data.service
-After=docker.service
+Wants=docker.service network-online.target mongodb.service
+Requires=docker.service network-online.target mongodb.service
+After=docker.service mongodb.service
 
 [Service]
 TimeoutStartSec=20m
@@ -16,6 +16,7 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/bitcannon:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p \
+    --link mongodb:mongo \
     --expose 2025 --hostname %p \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=2025 \
