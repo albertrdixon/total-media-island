@@ -1,0 +1,28 @@
+[Unit]
+Description=mongodb database
+Documentation=https://www.mongodb.org/
+Wants=docker.service network-online.target
+Requires=docker.service network-online.target mongodb-data.service
+After=docker.service mongodb-data.service
+
+[Service]
+TimeoutStartSec=20m
+Restart=on-failure
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+EnvironmentFile=-/etc/sysconfig/%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull mongo:latest"
+ExecStart=/bin/bash -c \
+  "/usr/bin/docker run --rm --name %p \
+    --volumes-from %p-data \
+    --volume /etc/localtime:/etc/localtime:ro \
+    --expose 27017 --hostname %p \
+    mongo:latest $OPTIONS"
+ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
+ExecReload=/bin/bash -c "/usr/bin/docker restart %p"
+
+[Install]
+WantedBy=multi-user.target
