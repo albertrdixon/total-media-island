@@ -2,8 +2,8 @@
 Description=sabnzb nzb downloader with vpn
 Documentation=https://hub.docker.com/r/binhex/arch-sabnzbdvpn/
 Wants=docker.service network-online.target
-Requires=docker.service sabnzb-data.service network-online.target
-After=docker.service sabnzb-data.service network-online.target
+Requires=docker.service sabnzb-data.service movie-downloads.service tv-downloads.service network-online.target
+After=docker.service sabnzb-data.service movie-downloads.service tv-downloads.service network-online.target
 
 [Service]
 TimeoutStartSec=20m
