@@ -12,14 +12,14 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull jwilder/nginx-proxy:latest"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/nginx-proxy:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
     --volume /var/run/docker.sock:/tmp/docker.sock:ro \
     --volume /etc/certs:/etc/nginx/certs \
     --publish 80:80 \
     --publish 443:443 \
-    jwilder/nginx-proxy:latest"
+    quay.io/albertrdixon/nginx-proxy:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
