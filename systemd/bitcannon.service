@@ -20,6 +20,7 @@ ExecStart=/bin/bash -c \
     --expose 2025 --hostname %p \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=2025 \
+    --env-file=/etc/sysconfig/%p \
     quay.io/albertrdixon/bitcannon:latest"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/bin/bash -c "/usr/bin/docker restart %p"

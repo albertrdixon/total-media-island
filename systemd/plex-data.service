@@ -14,8 +14,8 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/plex:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker start %p || \
-  /usr/bin/docker run --name %p \
+  "/usr/bin/docker port %p >/dev/null 2>&1 \
+  /usr/bin/docker create --name %p \
     --entrypoint /bin/echo \
     --volume /plexmediaserver \
     quay.io/albertrdixon/plex:latest 'Data for Plex Media Server'"

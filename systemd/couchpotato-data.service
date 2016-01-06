@@ -15,7 +15,7 @@ SyslogIdentifier=%p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker start %p || \
-  /usr/bin/docker run --name %p \
+  /usr/bin/docker create --name %p \
     --entrypoint /bin/echo \
     --volume /data \
     quay.io/albertrdixon/couchpotato:latest 'Data for Couchpotato'"
