@@ -26,7 +26,7 @@ ExecStart=/bin/bash -c \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=8081 \
     --env-file /etc/sysconfig/%p \
-    quay.io/albertrdixon/sickrage:latest docker-start"
+    quay.io/albertrdixon/sickrage:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 

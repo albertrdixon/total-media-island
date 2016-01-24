@@ -24,9 +24,9 @@ ExecStart=/bin/bash -c \
     --volume /etc/localtime:/etc/localtime:ro \
     --publish 5050:5050 \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
-    --env VIRTUAL_PORT=8081 \
+    --env VIRTUAL_PORT=5050 \
     --env-file /etc/sysconfig/%p \
-    quay.io/albertrdixon/couchpotato:latest docker-start"
+    quay.io/albertrdixon/couchpotato:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
