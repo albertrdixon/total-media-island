@@ -11,6 +11,7 @@ Restart=on-failure
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
@@ -25,7 +26,8 @@ ExecStart=/bin/bash -c \
     --publish 5050:5050 \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=5050 \
-    --env-file /etc/sysconfig/%p \
+    --env-file /etc/sysconfig/%p/env \
+    $OPTIONS \
     quay.io/albertrdixon/couchpotato:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p

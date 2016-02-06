@@ -28,7 +28,7 @@ ExecStart=/bin/bash -c \
     --dns 192.168.1.2 --hostname %p.$(hostname -d) \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=32400 \
-    --env-file /etc/sysconfig/%p \
+    --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/plex:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p

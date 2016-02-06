@@ -25,7 +25,7 @@ ExecStart=/bin/bash -c \
     --expose 9091 --hostname %p \
     --env VIRTUAL_HOST=%p.$(hostname -d),%p \
     --env VIRTUAL_PORT=9091 \
-    --env-file /etc/sysconfig/%p \
+    --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/transmission:latest docker-start"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
 ExecReload=/bin/bash -c "/usr/bin/docker restart %p"
