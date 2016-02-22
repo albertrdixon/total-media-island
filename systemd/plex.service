@@ -7,7 +7,7 @@ After=docker.service plex-data.service network-online.target
 
 [Service]
 TimeoutStartSec=20m
-Restart=on-failure
+Restart=always
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
