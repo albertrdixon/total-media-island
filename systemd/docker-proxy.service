@@ -15,12 +15,13 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull traefik:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
-    --volume /etc/sysconfig/%p/traefik.toml:/etc/traefik/traefik.toml \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
     --publish 80:80 \
     --publish 443:443 \
     --publish 8888:8888 \
-    traefik:latest"
+    traefik:latest \
+     --docker --docker.domain 'lan.dixon.rocks' \
+     --web --web.address ':8888' -l INFO"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
