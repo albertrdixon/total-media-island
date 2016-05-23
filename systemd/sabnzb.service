@@ -24,8 +24,8 @@ ExecStart=/bin/bash -c \
     --env VPN_PROV=pia \
     --env ENABLE_PRIVOXY=yes \
     --env-file /etc/sysconfig/%p/env \
-    --expose 8118 \
-    --label traefik.port=8118 \
+    --publish 8118:8118 \
+    --label traefik.port=8080 \
     --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --cap-add=NET_ADMIN \
     albertdixon/arch-sabnzbdvpn"
