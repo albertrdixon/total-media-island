@@ -1,5 +1,5 @@
 [Unit]
-Description=nginx docker proxy
+Description=traefik docker proxy
 Wants=docker.service network-online.target
 After=docker.service network-online.target
 Requires=docker.service network-online.target
@@ -12,14 +12,15 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/nginx-proxy:latest"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull traefik:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
-    --volume /var/run/docker.sock:/tmp/docker.sock:ro \
-    --volume /etc/certs:/etc/nginx/certs \
+    --volume /etc/sysconfig/%p/traefik.toml:/etc/traefik/traefik.toml \
+    --volume /var/run/docker.sock:/var/run/docker.sock:ro \
     --publish 80:80 \
     --publish 443:443 \
-    quay.io/albertrdixon/nginx-proxy:latest"
+    --publish 8888:8888 \
+    traefik:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
