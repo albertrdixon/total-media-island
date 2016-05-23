@@ -23,6 +23,7 @@ ExecStart=/bin/bash -c \
     --volume /data/tv_shows:/tv_shows \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
+    --expose 8081 \
     --label traefik.port=8081 \
     --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --env-file /etc/sysconfig/%p/env \
