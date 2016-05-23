@@ -23,9 +23,8 @@ ExecStart=/bin/bash -c \
     --volume /data/tv_shows:/tv_shows \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
-    --publish 8081:8081 \
-    --env VIRTUAL_HOST=%p.$(hostname -d),%p \
-    --env VIRTUAL_PORT=8081 \
+    --label traefik.port=8081 \
+    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --env-file /etc/sysconfig/%p/env \
     $OPTIONS \
     quay.io/albertrdixon/sickrage:latest"

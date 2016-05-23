@@ -20,13 +20,12 @@ ExecStart=/bin/bash -c \
     --volumes-from tv-downloads \
     --volumes-from movie-downloads \
     --volume /etc/localtime:/etc/localtime:ro \
-    --publish 8118:8118 \
-    --env VIRTUAL_HOST=%p.$(hostname -d),%p \
-    --env VIRTUAL_PORT=8080 \
     --env VPN_ENABLED=yes \
     --env VPN_PROV=pia \
     --env ENABLE_PRIVOXY=yes \
     --env-file /etc/sysconfig/%p/env \
+    --label traefik.port=8118 \
+    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --cap-add=NET_ADMIN \
     albertdixon/arch-sabnzbdvpn"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"

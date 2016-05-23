@@ -29,6 +29,7 @@ ExecStart=/bin/bash -c \
     --dns 8.8.8.8 --dns 8.8.4.4 \
     --hostname %p.$(hostname -d) \
     --label traefik.port=32400 \
+    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/plex:latest"
 ExecStop=/usr/bin/docker stop %p
