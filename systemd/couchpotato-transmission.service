@@ -23,7 +23,7 @@ ExecStart=/bin/bash -c \
     --dns 209.222.18.222 --dns 209.222.18.218 \
     --cap-add MKNOD --cap-add NET_ADMIN \
     --expose 9091 --hostname %p \
-    --label traefik.frontend.rule=%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --label traefik.port=9091 \
     --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/transmission:latest"

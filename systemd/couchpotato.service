@@ -24,7 +24,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --expose 5050 \
-    --label traefik.frontend.rule=%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --label traefik.port=5050 \
     --env-file /etc/sysconfig/%p/env \
     $OPTIONS \
