@@ -20,8 +20,8 @@ ExecStart=/bin/bash -c \
     --publish 443:443 \
     --publish 8888:8888 \
     traefik:latest \
-     --docker --docker.domain 'lan.dixon.rocks' \
-     --web --web.address ':8888' -l INFO"
+     --docker --docker.domain=$(hostname -d) \
+     --web --web.address=':8888' -l INFO"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
