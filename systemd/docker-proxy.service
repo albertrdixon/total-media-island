@@ -20,8 +20,8 @@ ExecStart=/bin/bash -c \
     --publish 443:443 \
     --publish 8888:8888 \
     traefik:latest \
-     --entrypoints='Name:http Address:80' \
-     --entrypoints='Name:https Address:443' \
+     --entrypoints='Name:http Address::80' \
+     --entrypoints='Name:https Address::443' \
      --defaultentrypoints=http \
      --docker \
      --docker.watch \
