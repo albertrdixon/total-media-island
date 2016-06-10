@@ -27,7 +27,7 @@ ExecStart=/bin/bash -c \
     -p 32469:32469 -p 33400:33400 \
     --cap-add=NET_ADMIN \
     --dns 8.8.8.8 --dns 8.8.4.4 \
-    --hostname %p.$(hostname -d) \
+    --hostname %p \
     --label traefik.port=32400 \
     --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
     --env-file /etc/sysconfig/%p/env \
