@@ -26,8 +26,6 @@ ExecStart=/bin/bash -c \
      --docker \
      --docker.watch \
      --docker.domain=$(hostname -d) \
-     --web \
-     --web.address=':8888' \
      --loglevel=INFO"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
