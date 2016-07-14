@@ -10,6 +10,7 @@ Restart=on-failure
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull traefik:latest"
@@ -20,13 +21,14 @@ ExecStart=/bin/bash -c \
     --publish 443:443 \
     --publish 8888:8888 \
     traefik:latest \
-     --entrypoints='Name:http Address::80' \
-     --entrypoints='Name:https Address::443' \
-     --defaultentrypoints=http \
+     --entrypoints='Name:http Address::80 Redirect.EntryPoint:https' \
+     --entrypoints='Name:https Address::443 TLS:' \
+     --defaultentrypoints=https \
      --docker \
      --docker.watch \
      --docker.domain=$(hostname -d) \
-     --loglevel=INFO"
+     --loglevel=INFO \
+     $TRAEFIK_OPTS"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
