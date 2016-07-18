@@ -11,10 +11,10 @@ Restart=always
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/sickrage:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p \
     --hostname %p \
@@ -25,7 +25,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/localtime:/etc/localtime:ro \
     --expose 8081 \
     --label traefik.port=8081 \
-    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE \
     --env-file /etc/sysconfig/%p/env \
     $OPTIONS \
     quay.io/albertrdixon/sickrage:latest"

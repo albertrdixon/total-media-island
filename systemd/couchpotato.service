@@ -11,6 +11,7 @@ Restart=always
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
@@ -24,7 +25,7 @@ ExecStart=/bin/bash -c \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
     --expose 5050 \
-    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE \
     --label traefik.port=5050 \
     --env-file /etc/sysconfig/%p/env \
     $OPTIONS \

@@ -11,9 +11,10 @@ Restart=on-failure
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+Environment=TRAEFIK_RULE=Host:%p
+EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull albertdixon/arch-sabnzbdvpn"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p -t \
     --volumes-from %p-data \
@@ -26,7 +27,7 @@ ExecStart=/bin/bash -c \
     --env-file /etc/sysconfig/%p/env \
     --publish 8118:8118 \
     --label traefik.port=8080 \
-    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE=Host:%p \
     --cap-add=NET_ADMIN \
     albertdixon/arch-sabnzbdvpn"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"

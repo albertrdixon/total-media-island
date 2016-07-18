@@ -1,0 +1,44 @@
+logLevel = "ERROR"
+defaultEntryPoints = ["http", "https"]
+
+[entryPoints]
+  [entryPoints.http]
+  address = ":80"
+    [entryPoints.http.redirect]
+    regex = "^http://(.*)"
+    replacement = "https://$1"
+  [entryPoints.https]
+  address = ":443"
+    [entryPoints.https.tls]
+
+[web]
+address = ":8888"
+ReadOnly = true
+
+[acme]
+email = "albert@dixon.rocks"
+storageFile = "acme.json"
+entryPoint = "https"
+[[acme.domains]]
+  main = "dixon.rocks"
+  sans = [
+  "plex-info.dixon.rocks",
+  "sickrage.dixon.rocks",
+  "couchpotato.dixon.rocks",
+  ]
+[[acme.domains]]
+  main = "lan.dixon.rocks"
+  sans = [
+  "plex-info.lan.dixon.rocks",
+  "plex.lan.dixon.rocks",
+  "sickrage.lan.dixon.rocks",
+  "couchpotato.lan.dixon.rocks",
+  "sickrage-transmission.lan.dixon.rocks",
+  "couchpotato-transmission.lan.dixon.rocks",
+  "sabnzb.lan.dixon.rocks",
+  ]
+
+[docker]
+endpoint = "unix:///var/run/docker.sock"
+domain = "lan.dixon.rocks"
+watch = true

@@ -11,6 +11,8 @@ Restart=always
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+Environment=TRAEFIK_RULE=Host:%p
+EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/transmission:latest"
@@ -23,7 +25,7 @@ ExecStart=/bin/bash -c \
     --dns 209.222.18.222 --dns 209.222.18.218 \
     --cap-add MKNOD --cap-add NET_ADMIN \
     --expose 9091 --hostname %p \
-    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE \
     --label traefik.port=9091 \
     --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/transmission:latest"
