@@ -11,20 +11,20 @@ Restart=always
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
+Environment=TRAEFIK_RULE=Host:%p
+EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/plexpy:latest"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker run --rm --name %p \
     --volumes-from plexpy-data \
     --volumes-from plex-data \
     --volume /etc/timezone:/etc/timezone:ro \
     --volume /etc/localtime:/etc/localtime:ro \
-    -p 8181:8181 \
-    --dns 8.8.8.8 --dns 8.8.4.4 \
+    --expose 8181 \
     --hostname %p \
     --label traefik.port=8181 \
-    --label traefik.frontend.rule=Host:%p.$(hostname -d),%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE \
     quay.io/albertrdixon/plexpy:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p

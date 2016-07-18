@@ -12,7 +12,6 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull busybox"
 ExecStart=/bin/bash -c \
   "/usr/bin/docker port %p >/dev/null 2>&1 || \
   /usr/bin/docker create --name %p \

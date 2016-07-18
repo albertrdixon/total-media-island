@@ -12,22 +12,16 @@ StandardError=inherit
 SyslogIdentifier=%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull traefik:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p -t \
+  "/usr/bin/docker run --rm --name %p \
     --volume /var/run/docker.sock:/var/run/docker.sock:ro \
+    --volume /etc/sysconfig/%p/traefik.toml:/traefik.toml \
+    --volume /data/ssl/acme.json:/acme.json \
     --publish 80:80 \
     --publish 443:443 \
     --publish 8888:8888 \
     traefik:latest \
-     --entrypoints='Name:http Address::80' \
-     --entrypoints='Name:https Address::443' \
-     --defaultentrypoints=http \
-     --docker \
-     --docker.watch \
-     --docker.domain=$(hostname -d) \
-     --web \
-     --web.address=':8888' \
+     --configfile=/traefik.toml \
      --loglevel=INFO"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p

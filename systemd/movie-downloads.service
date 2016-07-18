@@ -10,10 +10,9 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull busybox:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker start %p || \
-  /usr/bin/docker run --name %p \
+  "/usr/bin/docker port %p || \
+  /usr/bin/docker create --name %p \
     --entrypoint /bin/echo \
     --volume /downloads/movies \
     busybox:latest 'Movie downloads'"

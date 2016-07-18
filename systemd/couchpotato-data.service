@@ -12,14 +12,12 @@ TimeoutStartSec=20m
 StandardOutput=journal
 StandardError=inherit
 SyslogIdentifier=%p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
 ExecStart=/bin/bash -c \
-  "/usr/bin/docker start %p || \
+  "/usr/bin/docker port %p || \
   /usr/bin/docker create --name %p \
     --entrypoint /bin/echo \
     --volume /data \
     quay.io/albertrdixon/couchpotato:latest 'Data for Couchpotato'"
-SuccessExitStatus=0 1 2
 Restart=no
 RemainAfterExit=yes
 
