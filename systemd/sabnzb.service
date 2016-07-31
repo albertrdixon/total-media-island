@@ -27,7 +27,7 @@ ExecStart=/bin/bash -c \
     --env-file /etc/sysconfig/%p/env \
     --publish 8118:8118 \
     --label traefik.port=8080 \
-    --label traefik.frontend.rule=$TRAEFIK_RULE=Host:%p \
+    --label traefik.frontend.rule=$TRAEFIK_RULE \
     --cap-add=NET_ADMIN \
     albertdixon/arch-sabnzbdvpn"
 ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
