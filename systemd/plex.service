@@ -32,7 +32,7 @@ ExecStart=/bin/bash -c \
     --label traefik.port=32400 \
     --label traefik.frontend.rule=$TRAEFIK_RULE \
     --env-file /etc/sysconfig/%p/env \
-    quay.io/albertrdixon/plex:latest"
+    albertdixon/plex:latest"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
