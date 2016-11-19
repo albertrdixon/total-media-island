@@ -1,6 +1,6 @@
 [Unit]
 Description=tv show downloader
-Documentation=https://www.sickrage.tv/ 
+Documentation=https://www.sickrage.tv/
 Wants=docker.service tv-downloads.service sickrage-transmission.service network-online.target
 Requires=docker.service tv-downloads.service sickrage-transmission.service network-online.target
 After=docker.service tv-downloads.service network-online.target
@@ -28,7 +28,7 @@ ExecStart=/bin/bash -c \
     --label traefik.frontend.rule=$TRAEFIK_RULE \
     --env-file /etc/sysconfig/%p/env \
     $OPTIONS \
-    quay.io/albertrdixon/sickrage:latest"
+    quay.io/albertrdixon/sickrage:medusa"
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
