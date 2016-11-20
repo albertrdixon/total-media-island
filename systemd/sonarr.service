@@ -22,7 +22,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
   --volume=/data/tv_shows:/tv \
   --expose=8989 \
   --label=traefik.port=8989 \
-  --label=traefik.frontend.rule=$TRAEFIK_RULE \
+  --label=traefik.frontend.rule=${TRAEFIK_RULE} \
   --env-file=/etc/sysconfig/%p/env \
   ${OPTIONS} \
   linuxserver/sonarr:${SONARR_TAG}
