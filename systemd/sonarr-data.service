@@ -1,0 +1,21 @@
+[Unit]
+Description=Sonarr PVR data
+Documentation=https://sonarr.tv/
+Requires=docker.socket
+After=docker.socket
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Restart=no
+Environment=SONARR_TAG=latest
+EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStart=-/usr/bin/docker create --name=%p \
+  --entrypoint=/bin/echo \
+  --volume=/config \
+  linuxserver/sonarr:${SONARR_TAG} 'Data for Sonarr'
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

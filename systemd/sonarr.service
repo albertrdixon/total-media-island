@@ -1,0 +1,33 @@
+[Unit]
+Description=Sonarr PVR agent
+Documentation=https://sonarr.tv/
+Requires=docker.socket sonarr-data.service tv-downloads.service
+After=docker.socket sonarr-data.service tv-downloads.service
+
+[Service]
+Restart=always
+StandardOutput=journal
+StandardError=inherit
+SyslogIdentifier=%p
+Environment="TRAEFIK_RULE=Host:%p" "SONARR_TAG=latest"
+EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStart=/usr/bin/docker run --rm --name=%p \
+  --hostname=%p \
+  --volumes-from=sonarr-data --volumes-from=tv-downloads \
+  --volume=/dev/rtc:/dev/rtc:ro \
+  --volume /etc/timezone:/etc/timezone:ro \
+  --volume /etc/localtime:/etc/localtime:ro \
+  --volumes=/data/tv_shows:/tv \
+  --expose=8989 \
+  --label=traefik.port=8081 \
+  --label=traefik.frontend.rule=$TRAEFIK_RULE \
+  --env-file=/etc/sysconfig/%p/env \
+  ${OPTIONS} \
+  linuxserver/sonarr:${SONARR_TAG}
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target
