@@ -1,34 +1,34 @@
 [Unit]
 Description=tv show downloader
 Documentation=https://www.sickrage.tv/ 
-Wants=docker.service tv-downloads.service sickrage-transmission.service network-online.target
-Requires=docker.service tv-downloads.service sickrage-transmission.service network-online.target
-After=docker.service tv-downloads.service network-online.target
+Requires=docker.socket tv-downloads.service
+After=docker.socket tv-downloads.service network-online.target
 
 [Service]
-TimeoutStartSec=20m
-Restart=always
-StandardOutput=journal
-StandardError=inherit
-SyslogIdentifier=%p
+Restart=on-failure
+Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
+Environment=REPO=SickRage/SickRage
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p \
-    --hostname %p \
-    --volumes-from tv-downloads \
-    --volumes-from %p-data \
-    --volume /data/tv_shows:/tv_shows \
-    --volume /etc/timezone:/etc/timezone:ro \
-    --volume /etc/localtime:/etc/localtime:ro \
-    --expose 8081 \
-    --label traefik.port=8081 \
-    --label traefik.frontend.rule=$TRAEFIK_RULE \
+ExecStartPre=/bin/sh -c '/usr/bin/docker port %p-data || /usr/bin/docker create --name=%p-data --volume=/data busybox echo Data for SickRage'
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/sickrage:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+    --hostname=%p \
+    --volumes-from=tv-downloads \
+    --volumes-from=%p-data \
+    --volume=/data/tv_shows:/tv_shows \
+    --volume=/etc/timezone:/etc/timezone:ro \
+    --volume=/etc/localtime:/etc/localtime:ro \
+    --expose=8081 \
+    --label=traefik.port=8081 \
+    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --label=traefik.frontend.entryPoints=http,https \
+    --env=REPO=${REPO} \
     --env-file /etc/sysconfig/%p/env \
-    $OPTIONS \
-    quay.io/albertrdixon/sickrage:latest"
+    ${OPTIONS} \
+    quay.io/albertrdixon/sickrage:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 

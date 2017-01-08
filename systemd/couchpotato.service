@@ -1,35 +1,32 @@
 [Unit]
 Description=movie downloader
 Documentation=https://couchpota.to/
-Wants=docker.service network-online.target
-After=docker.service movie-downloads.service network-online.target
-Requires=docker.service movie-downloads.service couchpotato-transmission.service network-online.target
+Requires=docker.socket movie-downloads.service
+After=docker.socket movie-downloads.service network-online.target
 
 [Service]
-TimeoutStartSec=20m
-Restart=always
-StandardOutput=journal
-StandardError=inherit
-SyslogIdentifier=%p
+Restart=on-failure
+Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull quay.io/albertrdixon/couchpotato:latest"
-ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p \
-    --hostname %p \
-    --volumes-from movie-downloads \
-    --volumes-from %p-data \
-    --volume /data/movies:/movies \
-    --volume /etc/timezone:/etc/timezone:ro \
-    --volume /etc/localtime:/etc/localtime:ro \
-    --expose 5050 \
-    --label traefik.frontend.rule=$TRAEFIK_RULE \
-    --label traefik.port=5050 \
+ExecStartPre=/bin/sh -c '/usr/bin/docker port %p-data || /usr/bin/docker create --name=%p-data --volume=/data busybox echo Data for CouchPotato'
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/couchpotato:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+    --hostname=%p \
+    --volumes-from=movie-downloads \
+    --volumes-from=%p-data \
+    --volume=/data/movies:/movies \
+    --volume=/etc/timezone:/etc/timezone:ro \
+    --volume=/etc/localtime:/etc/localtime:ro \
+    --expose=5050 \
+    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --label=traefik.port=5050 \
+    --label=traefik.frontend.entryPoints=http,https \
     --env-file /etc/sysconfig/%p/env \
-    $OPTIONS \
-    quay.io/albertrdixon/couchpotato:latest"
+    ${OPTIONS} \
+    quay.io/albertrdixon/couchpotato:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
 
