@@ -6,10 +6,10 @@ After=docker.socket tv-downloads.service network-online.target
 
 [Service]
 Restart=on-failure
+EnvironmentFile=-/etc/sysconfig/%p/run
 Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 Environment=REPO=SickRage/SickRage
-EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/bin/sh -c '/usr/bin/docker port %p-data || /usr/bin/docker create --name=%p-data --volume=/data busybox echo Data for SickRage'
