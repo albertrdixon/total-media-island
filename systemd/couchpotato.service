@@ -21,7 +21,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
     --expose=5050 \
-    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --label=traefik.frontend.rule=${TRAEFIK_RULE} \
     --label=traefik.port=5050 \
     --label=traefik.frontend.entryPoints=http,https \
     --env-file /etc/sysconfig/%p/env \
