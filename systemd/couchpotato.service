@@ -25,7 +25,6 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --label=traefik.port=5050 \
     --label=traefik.frontend.entryPoints=http,https \
     --env-file /etc/sysconfig/%p/env \
-    ${OPTIONS} \
     quay.io/albertrdixon/couchpotato:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker restart %p
