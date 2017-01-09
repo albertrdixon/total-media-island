@@ -1,5 +1,5 @@
 [Unit]
-Description=movie downloader
+Description=CouchPotato Movie PVR
 Documentation=https://couchpota.to/
 Requires=docker.socket movie-downloads.service
 After=docker.socket movie-downloads.service network-online.target

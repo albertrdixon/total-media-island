@@ -1,5 +1,5 @@
 [Unit]
-Description=tv show downloader
+Description=SickRage TV PVR
 Documentation=https://www.sickrage.tv/ 
 Requires=docker.socket tv-downloads.service
 After=docker.socket tv-downloads.service network-online.target
