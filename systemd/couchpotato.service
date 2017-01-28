@@ -9,14 +9,13 @@ Restart=on-failure
 EnvironmentFile=-/etc/sysconfig/%p/run
 Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
+ExecStartPre=-/bin/mkdir -pv /opt/couchpotato
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/bin/sh -c '/usr/bin/docker port %p-data || /usr/bin/docker create --name=%p-data --volume=/data busybox echo Data for CouchPotato'
-ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/couchpotato:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
     --hostname=%p \
     --volumes-from=movie-downloads \
-    --volumes-from=%p-data \
+    --volume=/opt/couchpotato:/data \
     --volume=/data/movies:/movies \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
@@ -27,7 +26,6 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --env-file /etc/sysconfig/%p/env \
     quay.io/albertrdixon/couchpotato:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
-ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target
