@@ -19,7 +19,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --cap-add=NET_ADMIN \
     --dns=209.222.18.222 --dns=209.222.18.218 \
     --label=traefik.port=8080 \
-    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --label=traefik.frontend.rule=${TRAEFIK_RULE} \
     --env-file=/etc/sysconfig/%p/env \
     albertdixon/sabnzb:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
