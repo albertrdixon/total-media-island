@@ -1,37 +1,28 @@
 [Unit]
-Description=sabnzb nzb downloader with vpn
-Documentation=https://hub.docker.com/r/binhex/arch-sabnzbdvpn/
-Wants=docker.service network-online.target
-Requires=docker.service sabnzb-data.service movie-downloads.service tv-downloads.service network-online.target
-After=docker.service sabnzb-data.service movie-downloads.service tv-downloads.service network-online.target
+Description=SABnzbd with OpenVPN
+Documentation=https://sabnzbd.org
+Requires=docker.socket movie-downloads.service tv-downloads.service network-online.target
+After=docker.socket movie-downloads.service tv-downloads.service network-online.target
 
 [Service]
-TimeoutStartSec=20m
-Restart=on-failure
-StandardOutput=journal
-StandardError=inherit
-SyslogIdentifier=%p
+Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p -t \
-    --volumes-from %p-data \
-    --volumes-from tv-downloads \
-    --volumes-from movie-downloads \
-    --volume /etc/localtime:/etc/localtime:ro \
-    --env VPN_ENABLED=yes \
-    --env VPN_PROV=pia \
-    --env ENABLE_PRIVOXY=yes \
-    --env-file /etc/sysconfig/%p/env \
-    --publish 8118:8118 \
-    --label traefik.port=8080 \
-    --label traefik.frontend.rule=$TRAEFIK_RULE \
+ExecStartPre=-/usr/bin/docker pull albertdixon/sabnzb:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+    --volumes-from=tv-downloads \
+    --volumes-from=movie-downloads \
+    --volume=/opt/%p:/data \
     --cap-add=NET_ADMIN \
-    albertdixon/arch-sabnzbdvpn"
-ExecStop=/bin/bash -c "/usr/bin/docker stop %p"
-ExecReload=/bin/bash -c "/usr/bin/docker restart %p"
+    --dns=209.222.18.222 --dns=209.222.18.218 \
+    --label=traefik.port=8080 \
+    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --env-file=/etc/sysconfig/%p/env \
+    albertdixon/sabnzb:${IMAGE_TAG}
+ExecStop=/usr/bin/docker stop %p
 
 [Install]
 WantedBy=multi-user.target
