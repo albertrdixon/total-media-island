@@ -17,8 +17,8 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/usr/bin/docker run --rm --name=%p \
   --hostname=%p \
-  --volumes=/opt/sonarr:/config \
-  --volumes=tv-downloads:/downloads/tv_shows \
+  --volume=/opt/sonarr:/config \
+  --volume=tv-downloads:/downloads/tv_shows \
   --volume=/dev/rtc:/dev/rtc:ro \
   --volume=/etc/timezone:/etc/timezone:ro \
   --volume=/etc/localtime:/etc/localtime:ro \

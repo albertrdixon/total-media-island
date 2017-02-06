@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/usr/bin/docker pull albertdixon/sabnzb:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
     --volume=tv-downloads:/downloads/tv_shows \
-    --volumes=movie-downloads:/downloads/movies \
+    --volume=movie-downloads:/downloads/movies \
     --volume=/opt/%p:/data \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
