@@ -8,7 +8,7 @@ Type=oneshot
 RemainAfterExit=yes
 Environment=DRIVER=local
 EnvironmentFile=-/etc/sysconfig/volumes/movies.env
-ExecStart=/usr/bin/docker volume create movie-downloads --driver=${DRIVER} ${OPTS}
+ExecStart=/usr/bin/docker volume create --driver=${DRIVER} ${OPTS} movie-downloads
 
 [Install]
 WantedBy=multi-user.target

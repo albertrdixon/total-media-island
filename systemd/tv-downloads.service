@@ -8,7 +8,7 @@ Type=oneshot
 RemainAfterExit=yes
 Environment=DRIVER=local
 EnvironmentFile=-/etc/sysconfig/volumes/tv.env
-ExecStart=/usr/bin/docker volume create tv-downloads --driver=${DRIVER} ${OPTS}
+ExecStart=/usr/bin/docker volume create --driver=${DRIVER} ${OPTS} tv-downloads
 
 [Install]
 WantedBy=multi-user.target
