@@ -1,24 +1,14 @@
 [Unit]
-Description=data volume for movie downloads
-Wants=docker.service network-online.target
-After=docker.service network-online.target
-Requires=docker.service network-online.target
+Description=Data volume for movie downloads
+Requires=docker.socket
+After=docker.socket
 
 [Service]
 Type=oneshot
-TimeoutStartSec=20m
-StandardOutput=journal
-StandardError=inherit
-SyslogIdentifier=%p
-ExecStart=/bin/bash -c \
-  "/usr/bin/docker port %p || \
-  /usr/bin/docker create --name %p \
-    --entrypoint /bin/echo \
-    --volume /downloads/movies \
-    busybox:latest 'Movie downloads'"
-SuccessExitStatus=0 1 2
-Restart=no
 RemainAfterExit=yes
+Environment=DRIVER=local
+EnvironmentFile=-/etc/sysconfig/volumes/movies.env
+ExecStart=/usr/bin/docker volume create movie-downloads --driver=${DRIVER} ${OPTS}
 
 [Install]
 WantedBy=multi-user.target

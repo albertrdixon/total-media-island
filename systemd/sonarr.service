@@ -1,8 +1,8 @@
 [Unit]
 Description=Sonarr PVR agent
 Documentation=https://sonarr.tv/
-Requires=docker.socket sonarr-data.service tv-downloads.service
-After=docker.socket sonarr-data.service tv-downloads.service
+Requires=docker.socket tv-downloads.service
+After=docker.socket tv-downloads.service
 
 [Service]
 Restart=always
@@ -12,14 +12,16 @@ SyslogIdentifier=%p
 Environment=TRAEFIK_RULE=Host:%p
 Environment=SONARR_TAG=latest
 EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/sonarr
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/usr/bin/docker run --rm --name=%p \
   --hostname=%p \
-  --volumes-from=sonarr-data --volumes-from=tv-downloads \
+  --volumes=/opt/sonarr:/config \
+  --volumes=tv-downloads:/downloads/tv_shows \
   --volume=/dev/rtc:/dev/rtc:ro \
-  --volume /etc/timezone:/etc/timezone:ro \
-  --volume /etc/localtime:/etc/localtime:ro \
+  --volume=/etc/timezone:/etc/timezone:ro \
+  --volume=/etc/localtime:/etc/localtime:ro \
   --volume=/data/tv_shows:/tv \
   --expose=8989 \
   --label=traefik.port=8989 \

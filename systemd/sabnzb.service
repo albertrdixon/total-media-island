@@ -11,11 +11,14 @@ EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=/bin/mkdir -pv /opt/%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=-/usr/bin/docker pull albertdixon/sabnzb:${IMAGE_TAG}
+ExecStartPre=/usr/bin/docker pull albertdixon/sabnzb:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
-    --volumes-from=tv-downloads \
-    --volumes-from=movie-downloads \
+    --volume=tv-downloads:/downloads/tv_shows \
+    --volumes=movie-downloads:/downloads/movies \
     --volume=/opt/%p:/data \
+    --volume=/etc/timezone:/etc/timezone:ro \
+    --volume=/etc/localtime:/etc/localtime:ro \
+    --volume=/usr/share/zoneinfo:/usr/share/zoneinfo:ro \
     --cap-add=NET_ADMIN \
     --dns=209.222.18.222 --dns=209.222.18.218 \
     --label=traefik.port=8080 \

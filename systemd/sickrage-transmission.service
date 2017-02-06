@@ -1,35 +1,31 @@
 [Unit]
 Description=torrent client for sickrage with vpn
 Documentation=https://github.com/albertrdixon/docker-transmission
-Wants=docker.service sickrage-transmission-data.service tv-downloads.service network-online.target
-Requires=docker.service sickrage-transmission-data.service tv-downloads.service network-online.target
-After=docker.service sickrage-transmission-data.service tv-downloads.service network-online.target
+Requires=docker.socket tv-downloads.service
+After=docker.socket tv-downloads.service
 
 [Service]
-TimeoutStartSec=20m
 Restart=always
-StandardOutput=journal
-StandardError=inherit
-SyslogIdentifier=%p
+Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/transmission/sickrage
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStart=/bin/bash -c \
-  "/usr/bin/docker run --rm --name %p \
-    --volumes-from tv-downloads \
-    --volumes-from %p-data \
-    --volume /etc/timezone:/etc/timezone:ro \
-    --volume /etc/localtime:/etc/localtime:ro \
-    --dns 209.222.18.222 --dns 209.222.18.218 \
-    --cap-add MKNOD --cap-add NET_ADMIN \
-    --expose 9091 --hostname %p \
-    --label traefik.port=9091 \
-    --label traefik.frontend.rule=$TRAEFIK_RULE \
-    --env-file /etc/sysconfig/%p/env \
-    quay.io/albertrdixon/transmission:latest"
+ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/transmission:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+    --volume=tv-downloads:/downloads/tv_shows \
+    --volume=/opt/transmission/sickrage:/transmission \
+    --volume=/etc/timezone:/etc/timezone:ro \
+    --volume=/etc/localtime:/etc/localtime:ro \
+    --dns=209.222.18.222 --dns=209.222.18.218 \
+    --cap-add=MKNOD --cap-add=NET_ADMIN \
+    --expose=9091 --hostname=%p \
+    --label=traefik.port=9091 \
+    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --env-file=/etc/sysconfig/%p/env \
+    quay.io/albertrdixon/transmission:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
-ExecReload=/usr/bin/docker restart %p
 
 [Install]
 WantedBy=multi-user.target
