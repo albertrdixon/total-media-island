@@ -14,7 +14,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/usr/bin/docker run --rm --name=%p \
     --hostname=%p \
-    --volumes-from=movie-downloads \
+    --volume=movie-downloads:/downloads/movies \
     --volume=/opt/couchpotato:/data \
     --volume=/data/movies:/movies \
     --volume=/etc/timezone:/etc/timezone:ro \
