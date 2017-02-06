@@ -22,7 +22,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --cap-add=MKNOD --cap-add=NET_ADMIN \
     --expose=9091 --hostname=%p \
     --label=traefik.port=9091 \
-    --label=traefik.frontend.rule=$TRAEFIK_RULE \
+    --label=traefik.frontend.rule=${TRAEFIK_RULE} \
     --env-file=/etc/sysconfig/%p/env \
     quay.io/albertrdixon/transmission:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
