@@ -1,0 +1,22 @@
+[Unit]
+Description=NzbGet Agent
+Documentation=http://nzbget.net
+
+[Service]
+Environment=IMAGE_TAG=latest
+Environment=TRAEFIK_RULE=Host:%p
+EnvironmentFile=/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/%p
+ExecStartPre=/usr/bin/docker pull linuxserver/nzbget:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+    --volume=tv-downloads:/downloads/tv_shows \
+    --volume=movie-downloads:/downloads/movies \
+    --volume=/opt/%p:/config \
+    --volume=/etc/timezone:/etc/timezone:ro \
+    --volume=/etc/localtime:/etc/localtime:ro \
+    --expose=6789 \
+    --env-file=/etc/sysconfig/%p/env \
+    --label=traefik.port=6789 \
+    --label=traefik.frontend.rule=${TRAEFIK_RULE} \
+    linuxserver/nzbget:${IMAGE_TAG}
+ExecStop=/usr/bin/docker stop %p
