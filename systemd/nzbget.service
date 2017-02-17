@@ -7,8 +7,10 @@ Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=/etc/sysconfig/%p/run
 ExecStartPre=/bin/mkdir -pv /opt/%p
+ExecStartPre=/usr/bin/docker volume create --driver=local nzbget-data
 ExecStartPre=/usr/bin/docker pull linuxserver/nzbget:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
+    --volume=nzbget-data:/data \
     --volume=tv-downloads:/downloads/tv_shows \
     --volume=movie-downloads:/downloads/movies \
     --volume=/opt/%p:/config \
