@@ -10,13 +10,13 @@ RestartSec=2
 Environment=IMAGE_TAG=latest
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -p /opt/plexmediaserver
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=-/usr/bin/docker pull quay.io/albertdixon/plex:${IMAGE_TAG}
-ExecStartPre=/bin/sh -c '/usr/bin/docker port %p-data || /usr/bin/docker create --name=%p-data --volume=/data busybox echo Data for Plex'
 ExecStart=/usr/bin/docker run --rm --name=%p \
     --net=host \
-    --volumes-from=%p-data \
+    --volume=/opt/plexmediaserver:/plexmediaserver \
     --volume=/data:/data \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
