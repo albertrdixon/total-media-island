@@ -7,7 +7,7 @@ After=docker.socket network-online.target
 [Service]
 Restart=on-failure
 RestartSec=2
-Environment=IMAGE_TAG=latest
+Environment=IMAGE_TAG=plexupdate
 Environment=TRAEFIK_RULE=Host:%p
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=/bin/mkdir -p /opt/plexmediaserver
