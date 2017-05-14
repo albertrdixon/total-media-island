@@ -1,0 +1,33 @@
+[Unit]
+Description=Radarr Movie Manager
+Documentation=https://radarr.video/
+Requires=docker.socket movie-downloads.service
+After=docker.socket movie-downloads.service
+
+[Service]
+Restart=always
+RestartSec=5
+Environment=TRAEFIK_RULE=Host:%p
+Environment=IMAGE_TAG=latest
+EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=/usr/bin/docker run --rm --name=%p \
+  --hostname=%p \
+  --volume=/opt/%p:/config \
+  --volume=movie-downloads:/downloads/movies \
+  --volume=/data/movies:/movies \
+  --volume=/dev/rtc:/dev/rtc:ro \
+  --volume=/etc/timezone:/etc/timezone:ro \
+  --volume=/etc/localtime:/etc/localtime:ro \
+  --expose=7878 \
+  --label=traefik.port=7878 \
+  --label=traefik.frontend.rule=${TRAEFIK_RULE} \
+  --env-file=/etc/sysconfig/%p/env \
+  linuxserver/radarr:${IMAGE_TAG}
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker kill --signal=HUP %p
+
+[Install]
+WantedBy=multi-user.target
