@@ -13,7 +13,7 @@ EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=/bin/mkdir -pv /opt/%p
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
-ExecStartPre=/usr/bin/docker run --rm --name=%p \
+ExecStart=/usr/bin/docker run --rm --name=%p \
   --hostname=%p \
   --volume=/opt/%p:/config \
   --volume=movie-downloads:/downloads/movies \
