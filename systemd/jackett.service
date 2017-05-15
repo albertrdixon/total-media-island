@@ -1,0 +1,33 @@
+[Unit]
+Description=Torrent API Server
+Documentation=https://github.com/Jackett/Jackett
+Requires=docker.socket
+Wants=docker-proxy.service
+After=docker.socket docker-proxy.service
+
+[Service]
+Restart=always
+RestartSec=5
+Environment=TRAEFIK_RULE=Host:%p
+Environment=IMAGE_TAG=latest
+EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=/bin/mkdir -pv /opt/%p
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStartPre=-/usr/bin/docker pull linuxserver/jackett:${IMAGE_TAG}
+ExecStart=/usr/bin/docker run --rm --name=%p \
+  --hostname=%p \
+  --volume=/opt/%p:/config \
+  --volume=/dev/rtc:/dev/rtc:ro \
+  --volume=/etc/timezone:/etc/timezone:ro \
+  --volume=/etc/localtime:/etc/localtime:ro \
+  --expose=9117 \
+  --label=traefik.port=9117 \
+  --label=traefik.frontend.rule=${TRAEFIK_RULE} \
+  --env-file=/etc/sysconfig/%p/env \
+  linuxserver/jackett:${IMAGE_TAG}
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker kill --signal=HUP %p
+
+[Install]
+WantedBy=multi-user.target
