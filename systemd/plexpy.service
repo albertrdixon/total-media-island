@@ -23,7 +23,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
   --expose=8181 \
   --env-file=/etc/sysconfig/%p/env \
   --label=traefik.port=8181 \
-  --label=traefik.frontend.rule=$TRAEFIK_RULE \
+  --label=traefik.frontend.rule=${TRAEFIK_RULE} \
   quay.io/albertrdixon/plexpy:${IMAGE_TAG}
 ExecStop=/usr/bin/docker stop %p
 ExecReload=/usr/bin/docker kill --signal=HUP %p
