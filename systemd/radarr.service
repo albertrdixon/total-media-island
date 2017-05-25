@@ -10,13 +10,15 @@ RestartSec=5
 Environment=TRAEFIK_RULE=Host:%p
 Environment=IMAGE_TAG=latest
 EnvironmentFile=-/etc/sysconfig/%p/run
-ExecStartPre=/bin/mkdir -pv /opt/%p
+ExecStartPre=/bin/mkdir -pv /opt/%p /opt/media
+ExecStartPre=/bin/chown 777 /opt/media
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=-/usr/bin/docker pull linuxserver/radarr:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
   --hostname=%p \
   --volume=/opt/%p:/config \
+  --volume=/opt/media:/downloads/media \
   --volume=movie-downloads:/downloads/movies \
   --volume=/data/movies:/movies \
   --volume=/dev/rtc:/dev/rtc:ro \
