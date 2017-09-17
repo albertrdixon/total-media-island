@@ -1,5 +1,5 @@
 [Unit]
-Description=VPN Client
+Description=VPN Client for transmission
 Documentation=https://github.com/dperson/openvpn-client
 Requires=docker.socket
 After=docker.socket
@@ -7,6 +7,8 @@ After=docker.socket
 [Service]
 Restart=always
 Environment=IMAGE_TAG=latest
+Environment=TRAEFIK_RULE=Host:%p
+Environment=TRAEFIK_PORT=9091
 EnvironmentFile=-/etc/sysconfig/%p/run
 ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
@@ -14,6 +16,9 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
   --cap-add=NET_ADMIN --device=/dev/net/tun \
   --volume=/opt/%p:/vpn \
   --env-file=/etc/sysconfig/%p/env \
+  --expose=${TRAEFIK_PORT} \
+  --label=traefik.port=${TRAEFIK_PORT} \
+  --label=traefik.frontend.rule=${TRAEFIK_RULE} \
   dperson/openvpn-client:${IMAGE_TAG} \
     -d -f ""
 ExecStop=/usr/bin/docker stop %p
