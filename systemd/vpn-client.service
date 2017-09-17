@@ -12,7 +12,7 @@ ExecStartPre=-/usr/bin/docker kill %p
 ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStart=/usr/bin/docker run --rm --name=%p \
   --cap-add=NET_ADMIN --device=/dev/net/tun \
-  --volume=/etc/sysconfig/%p/ssl:/vpn \
+  --volume=/opt/%p:/vpn \
   --env-file=/etc/sysconfig/%p/env \
   dperson/openvpn-client:${IMAGE_TAG} \
     -d -f ""
