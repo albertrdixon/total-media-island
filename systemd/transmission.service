@@ -15,6 +15,7 @@ ExecStartPre=-/usr/bin/docker rm -f %p
 ExecStartPre=/usr/bin/docker pull quay.io/albertrdixon/transmission:${IMAGE_TAG}
 ExecStart=/usr/bin/docker run --rm --name=%p \
     --volume=tv-downloads:/downloads/tv_shows \
+    --volume=movie-downloads:/download/movies \
     --volume=/opt/transmission/sickrage:/transmission \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
