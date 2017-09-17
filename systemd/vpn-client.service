@@ -1,0 +1,23 @@
+[Unit]
+Description=VPN Client
+Documentation=https://github.com/dperson/openvpn-client
+Requires=docker.socket
+After=docker.socket
+
+[Service]
+Restart=always
+Environment=IMAGE_TAG=latest
+EnvironmentFile=-/etc/sysconfig/%p/run
+ExecStartPre=-/usr/bin/docker kill %p
+ExecStartPre=-/usr/bin/docker rm -f %p
+ExecStart=/usr/bin/docker run --rm --name=%p \
+  --cap-add=NET_ADMIN --device=/dev/net/tun \
+  --volume=/etc/sysconfig/%p/ssl:/vpn \
+  --env-file=/etc/sysconfig/%p/env \
+  dperson/openvpn-client:${IMAGE_TAG} \
+    -d -f ""
+ExecStop=/usr/bin/docker stop %p
+ExecReload=/usr/bin/docker restart %p
+
+[Install]
+WantedBy=multi-user.target

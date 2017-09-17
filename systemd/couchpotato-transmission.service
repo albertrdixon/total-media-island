@@ -1,8 +1,8 @@
 [Unit]
 Description=Torrent client for couchpotato with vpn
 Documentation=https://github.com/albertrdixon/docker-transmission
-Requires=docker.socket tv-downloads.service
-After=docker.socket tv-downloads.service
+Requires=docker.socket tv-downloads.service vpn-client.service
+After=docker.socket tv-downloads.service vpn-client.service
 
 [Service]
 Restart=always
@@ -18,8 +18,7 @@ ExecStart=/usr/bin/docker run --rm --name=%p \
     --volume=/opt/transmission/couchpotato:/transmission \
     --volume=/etc/timezone:/etc/timezone:ro \
     --volume=/etc/localtime:/etc/localtime:ro \
-    --dns=209.222.18.222 --dns=209.222.18.218 \
-    --cap-add=MKNOD --cap-add=NET_ADMIN \
+    --net=container:vpn-client \
     --expose=9091 --hostname=%p \
     --label=traefik.port=9091 \
     --label=traefik.frontend.rule=${TRAEFIK_RULE} \
